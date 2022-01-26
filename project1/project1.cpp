@@ -1,54 +1,39 @@
 #include<iostream>
-#include<string>
-#include<array>
-#include<unordered_map>
-const unsigned int NUM_SIDES = 3;
+#include "triangle.cpp"
+
 using namespace std;
-
-
+// @Brief - Checks if a string is a positive integer
+// @param[in] s - string to evaluate
+// @return bool true if string is a positive integer false otherwise
 bool is_pos_num(const string s) {
   string::const_iterator it = s.begin();
   while (it != s.end() and isdigit(*it)) ++it;
   return !s.empty() and it == s.end();
 }
 
-unsigned int get_num_array_els_equal(
-  const std::array<unsigned int, NUM_SIDES> arr) {
-  std::unordered_map<unsigned int, size_t> count;
-  for (const auto elem : arr) {
-    count[elem]++;
-  }
-  unsigned int max = 0;
-  for (const auto pair : count) {
-    if (pair.second > max)
-    {
-      max = pair.second;
-    }
-  }
-  return max; 
-}
-
 int main() {
   int num_entries = 0;
-  std::array<unsigned int, NUM_SIDES> tri;
+  //Array to fill in
+  std::array<unsigned int, 3> tri;
+  //Keep prompting the user for valid input
+  //Inform them if input is invalid and prompt again.
   do {
     string input;
-    cout << "Enter a non-negative integer length of side "
+    //Prompt the user for input
+    cout << "Enter a positive integer length of side "
           << (num_entries+1) << " for the triangle\t";
+    //Get line handles null input. cin >> input crashes the program...
     getline(std::cin, input);
+    //Ensure that the input is valid
     if (is_pos_num(input)) 
       tri[num_entries++] = stoi(input);
     else
-      cout << "\n" << input << " is not a non-negative integer" << endl;
-  } while (num_entries<NUM_SIDES);
-  switch (get_num_array_els_equal(tri)) {
-    case 1:
-      cout << "You entered a scalene triangle!" << endl;
-      break;
-    case 2:
-      cout << "You entered an isosceles triangle!" << endl;
-      break;
-    default:
-      cout << "You entered an equilateral triangle!" << endl;
-  }
+      cout << "\n" << input << " is not a positive integer" << endl;
+  } while (num_entries < 3);
+  //Create the triangle
+  triangle inTriangle(tri);
+  //Print out what we want to know
+  cout << "Triangle Stats: " << endl << inTriangle;
+
+  return 0;
 };
