@@ -55,22 +55,24 @@ public:
       return ret;
     }
 
-    std::string to_string() const
-    { 
+    std::string to_string() const { 
       std::stringstream out;
       int i = 1;
       for (const auto elem : this->sides) {
         out << "Side: " << std::to_string(i++) << " length: "
         << std::to_string(elem) << std::endl;
       }
-      out << "This Triangle is " << this->get_triangle_type() << std::endl;
+      out << "This Triangle is "
+      << this->get_triangle_type() << std::endl;
       return out.str();
     }
 };
 
 //Overloads the stream operator to print out some useful
 // information about the class
-std::ostream & operator<< (std::ostream &out, const triangle & tri) {
+std::ostream & operator<< (
+  std::ostream &out,
+  const triangle & tri) {
   out << tri.to_string();
   return out;
 }
