@@ -8,13 +8,13 @@ using namespace std;
 bool is_pos_num(const string s) {
   string::const_iterator it = s.begin();
   while (it != s.end() and isdigit(*it)) ++it;
-  return !s.empty() and it == s.end();
+  return not s.empty() and it == s.end();
 }
 
 int main() {
   int num_entries = 0;
   //Array to fill in
-  std::array<unsigned int, 3> tri;
+  array<unsigned int, 3> tri;
   //Keep prompting the user for valid input
   //Inform them if input is invalid and prompt again.
   do {
@@ -25,9 +25,9 @@ int main() {
     //Get line handles null input. cin >> input crashes the program...
     getline(std::cin, input);
     //Ensure that the input is valid
-    if (is_pos_num(input)) 
+    if (is_pos_num(input))
       tri[num_entries++] = stoi(input);
-    else
+    else 
       cout << "\n" << input << " is not a positive integer" << endl;
   } while (num_entries < 3);
   //Create the triangle

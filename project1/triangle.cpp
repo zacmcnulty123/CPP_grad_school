@@ -1,9 +1,9 @@
-#pragma once
 #include<array>
 #include<unordered_map>
 #include<algorithm>
 #include<iterator>
 #include<iostream>
+#include<sstream>
 class triangle {
 private:
     //@Brief - Returns the number of sides with the same length
@@ -34,8 +34,8 @@ public:
     std::array<unsigned int, 3> sides;
 
     //@Brief - parameterized class constructor
-    triangle(std::array<unsigned int, 3> sides_) {
-      std::copy(std::begin(sides), std::end(sides), std::begin(sides_));
+    triangle(const std::array<unsigned int, 3> sides_) {
+      sides = sides_;
     }
 
     //@Brief - Returns what type of triangle the triangle is
@@ -54,15 +54,23 @@ public:
       }
       return ret;
     }
+
+    std::string to_string() const
+    { 
+      std::stringstream out;
+      int i = 1;
+      for (const auto elem : this->sides) {
+        out << "Side: " << std::to_string(i++) << " length: "
+        << std::to_string(elem) << std::endl;
+      }
+      out << "This Triangle is " << this->get_triangle_type() << std::endl;
+      return out.str();
+    }
 };
 
 //Overloads the stream operator to print out some useful
 // information about the class
 std::ostream & operator<< (std::ostream &out, const triangle & tri) {
-  int i = 1;
-  for (const auto elem : tri.sides) {
-    out << "Side: " << std::to_string(i++) << " length: " << elem << std::endl;
-  }
-  out << "This Triangle is " << tri.get_triangle_type() << std::endl;
+  out << tri.to_string();
   return out;
 }
