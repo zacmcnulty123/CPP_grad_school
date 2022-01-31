@@ -2,9 +2,11 @@
 #include<vector>
 #include<ostream>
 #include<string>
+
+template <class T>
 class statistics {
 private:
-  std::vector<double> seq;
+  std::vector<T> seq;
 public:
   //Constructor
   statistics();
@@ -15,7 +17,7 @@ public:
   // @Brief - pushes back a double to the seq queue
   // @Param[in] x - double to push onto the queue
   // @return void
-  void enqueue(double x);
+  void enqueue(T x);
   
   //@Brief - Returns the sum of all elements of the sequence
   //@Return - double the sum of all elements of the sequence
@@ -58,7 +60,8 @@ public:
   bool is_ready(const std::string func_name) const;
 };
 
-std::ostream & operator<< (std::ostream &out, const statistics & seq) {
+template<class T>
+std::ostream & operator<< (std::ostream &out, const statistics<T> & seq) {
   out << seq.to_string();
   return out;
 }

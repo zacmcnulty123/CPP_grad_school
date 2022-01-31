@@ -2,24 +2,26 @@
 #include <sstream>
 #include <iostream>
 #include <numeric>
-statistics::statistics(/* args */) {
-  seq = std::vector<double>();
+
+template<class T>
+statistics<T>::statistics(/* args */) {
+  seq = std::vector<T>();
 }
 
-statistics::~statistics() {
+template<class T>
+statistics<T>::~statistics() {
   //STL containers destroy themselves automatically
   //In class destructors
 }
 
-void
-statistics::enqueue(double x) {
+template <class T>
+void statistics<T>::enqueue(T x) {
   seq.push_back(x);
 }
 
-double
-statistics::get_sum() const {
-  if (not is_ready(__func__))
-  {
+template<class T>
+double statistics<T>::get_sum() const {
+  if (not is_ready(__func__)) {
     return 0.0;
   }
   else {
@@ -27,8 +29,8 @@ statistics::get_sum() const {
   }
 }
 
-double
-statistics::get_mean() const {
+template<class T>
+double statistics<T>::get_mean() const {
   if (not is_ready(__func__)) {
     return 0.0;
   }
@@ -37,8 +39,8 @@ statistics::get_mean() const {
   }
 }
 
-double
-statistics::get_STD() const {
+template<class T>
+double statistics<T>::get_STD() const {
   if (not is_ready(__func__)) {
     return 0.0;
   }
@@ -47,19 +49,18 @@ statistics::get_STD() const {
     return std;
   }
 }
-
-double
-statistics::get_variance() const {
+template<class T>
+double statistics<T>::get_variance() const {
   if (not is_ready(__func__)) {
     return 0.0;
   }
   else {
     double mean = get_mean();
-    std::vector<double> seq_diff(seq.size());
+    std::vector<T> seq_diff(seq.size());
     //Get the difference between each element in the original vector
     // And store it into a new container
     std::transform(seq.begin(), seq.end(), seq_diff.begin(),
-                    [mean](double x) {return x - mean; });
+                    [mean](T x) {return x - mean; });
     double variance =
       std::inner_product(seq_diff.begin(), seq_diff.end(),
                         seq_diff.begin(), 0.0) / seq.size();
@@ -67,8 +68,8 @@ statistics::get_variance() const {
   }
 }
 
-bool
-statistics::is_ready(const std::string func_name) const {
+template<class T>
+bool statistics<T>::is_ready(const std::string func_name) const {
   if (not seq.empty()) {
     return true;
   }
@@ -78,9 +79,8 @@ statistics::is_ready(const std::string func_name) const {
     return false;
   }
 }
-
-std::string
-statistics::to_string(const int start, const int stop) const {
+template<class T>
+std::string statistics<T>::to_string(const int start, const int stop) const {
   if(not is_ready(__func__)) {
     return std::string();
   }

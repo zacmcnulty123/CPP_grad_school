@@ -4,7 +4,7 @@ using namespace std;
 
 int main (void) {
   //Average Test
-  statistics myStats = statistics();
+  statistics<double> myStats = statistics<double>();
 
   for (double i = 1.0; i < 20.0; i++) {
     myStats.enqueue(i);
@@ -15,7 +15,7 @@ int main (void) {
   cout << myStats << endl;
 
   double arr[5] = {600, 470, 170, 430, 300};
-  statistics myStats1 = statistics();
+  statistics<double> myStats1 = statistics<double>();
   for (int i = 0; i < 5; i++) {
     myStats1.enqueue(arr[i]);
   }
