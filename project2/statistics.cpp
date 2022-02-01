@@ -2,10 +2,11 @@
 #include <sstream>
 #include <iostream>
 #include <numeric>
-
+#include <algorithm>
 template<class T>
 statistics<T>::statistics(/* args */) {
   seq = std::vector<T>();
+  mode = std::unordered_map<T, unsigned int>();
 }
 
 template<class T>
@@ -17,6 +18,7 @@ statistics<T>::~statistics() {
 template <class T>
 void statistics<T>::enqueue(T x) {
   seq.push_back(x);
+  mode[x]++;
 }
 
 template<class T>
@@ -49,6 +51,7 @@ double statistics<T>::get_STD() const {
     return std;
   }
 }
+
 template<class T>
 double statistics<T>::get_variance() const {
   if (not is_ready(__func__)) {
@@ -69,13 +72,28 @@ double statistics<T>::get_variance() const {
 }
 
 template<class T>
+T statistics<T>::get_mode() const {
+  if (not is_ready(__func__)) {
+    return (T)0.0;
+  }
+  else {
+    auto tmp =
+      std::max_element(mode.begin(), mode.end(),
+            [](const std::pair<T, unsigned int> & x,
+              const std::pair<T, unsigned int> & y)->bool 
+              {return x.second < y.second;});
+    return tmp->first;
+  }
+}
+
+template<class T>
 bool statistics<T>::is_ready(const std::string func_name) const {
   if (not seq.empty()) {
     return true;
   }
   else {
     std::cout << " Cannot " << func_name << "!"
-              << "Sequence is empty!" << std::endl;
+              << " Sequence is empty!" << std::endl;
     return false;
   }
 }

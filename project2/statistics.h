@@ -2,11 +2,12 @@
 #include<vector>
 #include<ostream>
 #include<string>
-
+#include<unordered_map>
 template <class T>
 class statistics {
 private:
   std::vector<T> seq;
+  std::unordered_map<T, unsigned int> mode;
 public:
   //Constructor
   statistics();
@@ -14,7 +15,7 @@ public:
   ~statistics();
 
 
-  // @Brief - pushes back a double to the seq queue
+  // @Brief - pushes back a number to the seq queue
   // @Param[in] x - double to push onto the queue
   // @return void
   void enqueue(T x);
@@ -37,7 +38,7 @@ public:
 
   //@Brief - returns the mode of the sequence
   //@return double - The mode of the sequence
-  double get_mode() const;
+  T get_mode() const;
 
   //@Brief - returns the quartiles of the sequence
   //@return - returns the quartiles of the sequence
