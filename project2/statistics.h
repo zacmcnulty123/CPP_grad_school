@@ -16,7 +16,6 @@ public:
   //Destructor
   ~statistics();
 
-
   // @Brief - pushes back a number to the seq queue
   // @Param[in] x - double to push onto the queue
   // @return void
@@ -36,7 +35,7 @@ public:
 
   //@Brief - returns the median of the sequence
   //@return double - The median of the sequence
-  double get_median() const;
+  T get_median(std::vector<T> vec) const;
 
   //@Brief - returns the mode of the sequence
   //@return double - The mode of the sequence
@@ -44,7 +43,7 @@ public:
 
   //@Brief - returns the quartiles of the sequence
   //@return - returns the quartiles of the sequence
-  double get_quartiles() const;
+  std::vector<T> get_quartiles() const;
 
   //@Brief - returns the variation of the sequence
   //@return double - the variation of the sequence

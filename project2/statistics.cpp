@@ -95,6 +95,37 @@ T statistics<T>::get_mode() const {
   }
 }
 
+
+template<typename T>
+T statistics<T>::get_median(std::vector<T> vec) const {
+  if (vec.size() % 2 == 0) {
+    const auto median_it1 = vec.begin() + vec.size() / 2 -1;
+    const auto median_it2 = vec.begin() + vec.size() / 2;
+
+    std::nth_element(vec.begin(), median_it1, vec.end());
+    const auto e1 = *median_it1;
+
+    std::nth_element(vec.begin(), median_it2, vec.size());
+    const auto e2 = *median_it2;
+
+    return (e1 + e2) / 2;
+  }
+  else {
+    const auto median_it = vec.begin() + vec.size() / 2;
+    std::nth_element(vec.begin(), median_it, vec.size());
+    return *median_it;
+  }
+}
+
+template<typename T>
+std::vector<T> statistics<T>::get_quartiles() const {
+  std::vector<T> sorted(seq.size());
+  std::sort(seq.begin(), seq.end(), sorted);
+  //Get the median for the second quartile. Then
+  //Get the find the median between the median and the min for the 1st quartile
+  //Get the median between the median and the max for the 3rd quartile
+}
+
 template<typename T>
 bool statistics<T>::is_ready(const std::string func_name) const {
   if (not seq.empty()) {
@@ -106,6 +137,7 @@ bool statistics<T>::is_ready(const std::string func_name) const {
     return false;
   }
 }
+
 template<typename T>
 std::string statistics<T>::to_string(const int start, const int stop) const {
   if(not is_ready(__func__)) {
