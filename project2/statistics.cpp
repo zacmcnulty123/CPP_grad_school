@@ -3,25 +3,34 @@
 #include <iostream>
 #include <numeric>
 #include <algorithm>
-template<class T>
+
+template<typename T>
 statistics<T>::statistics(/* args */) {
   seq = std::vector<T>();
   mode = std::unordered_map<T, unsigned int>();
 }
+template<typename T>
+statistics<T>::statistics(std::vector<T> vec) {
+  seq = vec;
+  for (const T val : vec) {
+    mode[val]++;
+  }
+}
 
-template<class T>
+template<typename T>
 statistics<T>::~statistics() {
   //STL containers destroy themselves automatically
   //In class destructors
 }
 
-template <class T>
+
+template <typename T>
 void statistics<T>::enqueue(T x) {
   seq.push_back(x);
   mode[x]++;
 }
 
-template<class T>
+template<typename T>
 double statistics<T>::get_sum() const {
   if (not is_ready(__func__)) {
     return 0.0;
@@ -31,7 +40,7 @@ double statistics<T>::get_sum() const {
   }
 }
 
-template<class T>
+template<typename T>
 double statistics<T>::get_mean() const {
   if (not is_ready(__func__)) {
     return 0.0;
@@ -41,7 +50,7 @@ double statistics<T>::get_mean() const {
   }
 }
 
-template<class T>
+template<typename T>
 double statistics<T>::get_STD() const {
   if (not is_ready(__func__)) {
     return 0.0;
@@ -52,7 +61,7 @@ double statistics<T>::get_STD() const {
   }
 }
 
-template<class T>
+template<typename T>
 double statistics<T>::get_variance() const {
   if (not is_ready(__func__)) {
     return 0.0;
@@ -71,7 +80,7 @@ double statistics<T>::get_variance() const {
   }
 }
 
-template<class T>
+template<typename T>
 T statistics<T>::get_mode() const {
   if (not is_ready(__func__)) {
     return (T)0.0;
@@ -86,7 +95,7 @@ T statistics<T>::get_mode() const {
   }
 }
 
-template<class T>
+template<typename T>
 bool statistics<T>::is_ready(const std::string func_name) const {
   if (not seq.empty()) {
     return true;
@@ -97,7 +106,7 @@ bool statistics<T>::is_ready(const std::string func_name) const {
     return false;
   }
 }
-template<class T>
+template<typename T>
 std::string statistics<T>::to_string(const int start, const int stop) const {
   if(not is_ready(__func__)) {
     return std::string();

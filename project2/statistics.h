@@ -11,6 +11,8 @@ private:
 public:
   //Constructor
   statistics();
+
+  statistics(std::vector<T> vec);
   //Destructor
   ~statistics();
 
@@ -61,7 +63,7 @@ public:
   bool is_ready(const std::string func_name) const;
 };
 
-template<class T>
+template<typename T>
 std::ostream & operator<< (std::ostream &out, const statistics<T> & seq) {
   out << seq.to_string();
   return out;
