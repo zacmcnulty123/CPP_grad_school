@@ -3,15 +3,21 @@
 #include<ostream>
 #include<string>
 #include<map>
+#include<type_traits>
 template <class T>
 class statistics {
 private:
+  //Enforce Arithmetic only template type
+  //Causes compile errors if template is instantiated
+  //with non-arithmetic type
+  typename std::enable_if<std::is_arithmetic<T>::value, T>::type inner;
   std::vector<T> seq;
   std::map<T, unsigned int> mode;
-    //@Brief - returns the median of the sequence
-    //@param[in] vec - Vector to get the median for
-    //@return double - The median of the sequence
-    T get_median(std::vector<T> vec) const;
+
+  //@Brief - returns the median of the sequence
+  //@param[in] vec - Vector to get the median for
+  //@return double - The median of the sequence
+  T get_median(std::vector<T> vec) const;
 public:
   //Constructor
   statistics();
@@ -54,6 +60,12 @@ public:
   //@Brief - returns the variation of the sequence
   //@return double - the variation of the sequence
   double get_variance() const;
+
+  //@Brief - returns a string formatted to have the
+  //Descriptive statistics for the sequence
+  //@return - std::string. Formatted string for the
+  //Descriptive statistics
+  std::string get_descriptive_statistics() const;
 
   //@Brief - Returns a string of specified range
   //@Param[in] start - desired start index of the sequences

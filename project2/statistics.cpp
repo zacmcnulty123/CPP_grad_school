@@ -3,7 +3,6 @@
 #include <iostream>
 #include <numeric>
 #include <algorithm>
-
 template<typename T>
 statistics<T>::statistics(/* args */) {
   //Sequence to do calculations on
@@ -74,12 +73,15 @@ double statistics<T>::get_variance() const {
     return 0.0;
   }
   else {
+    //Reference for variance calculation:
+    //https://www.mathsisfun.com/data/standard-deviation.html
     double mean = get_mean();
     std::vector<T> seq_diff(seq.size());
     //Get the difference between each element in the original vector
     // And store it into a new container
+    // for each x_i: (x_i - mean)
     std::transform(seq.begin(), seq.end(), seq_diff.begin(),
-                    [mean](T x) {return x - mean; });
+                    [mean](T x) {return x - mean;});
     //Need to multiply vector elements by themselves and divide by the size
     double variance =
       std::inner_product(seq_diff.begin(), seq_diff.end(),
@@ -136,17 +138,38 @@ std::map<std::string, T> statistics<T>::get_quartiles() const {
     return std::map<std::string, T>();
   }
   else {
+    //Getting quartiles are getting the min, max, and
+    //finding the median of several ranges of the sorted vector
     std::map<std::string, T> ret;
     std::vector<T> sorted = seq;
     std::sort(sorted.begin(), sorted.end());
     std::vector<T> lower_half(sorted.begin(), sorted.begin() + sorted.size() / 2);
     std::vector<T> upper_half(sorted.begin() + sorted.size() / 2, sorted.end());
     ret["min"]= sorted[0];
-    ret["q2"] = get_median(sorted);
     ret["q1"] = get_median(lower_half);
+    ret["q2"] = get_median(sorted);
     ret["q3"] = get_median(upper_half);
     ret["max"] = sorted[sorted.size()-1];
     return ret;
+  }
+}
+
+template<typename T>
+std::string statistics<T>::get_descriptive_statistics() const {
+  if (not is_ready(__func__)) {
+  return std::string();
+  }
+  else {
+    //The descriptive statistics are a combination of
+    //the several functions in the class.
+    std::stringstream cout;
+    cout.precision(2);
+    cout << "Average: " << std::fixed << get_mean() << std::endl;
+    cout << "Mode: " << std::fixed << get_mode() << std::endl;
+    cout << "Standard Deviation: " << get_STD() << std::endl;
+    cout << "Variance: " << get_variance() << std::endl;
+    cout << "Quartiles\n" << get_quartiles() << std::endl;
+    return cout.str();
   }
 }
 
@@ -195,4 +218,3 @@ std::string statistics<T>::to_string(const int start, const int stop) const {
   }
   return ss.str();
 }
-
