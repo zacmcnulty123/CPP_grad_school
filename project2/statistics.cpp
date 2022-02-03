@@ -6,9 +6,12 @@
 
 template<typename T>
 statistics<T>::statistics(/* args */) {
+  //Sequence to do calculations on
   seq = std::vector<T>();
-  mode = std::unordered_map<T, unsigned int>();
+  //easily keep track of the mode element
+  mode = std::map<T, unsigned int>();
 }
+
 template<typename T>
 statistics<T>::statistics(std::vector<T> vec) {
   seq = vec;
@@ -23,7 +26,6 @@ statistics<T>::~statistics() {
   //In class destructors
 }
 
-
 template <typename T>
 void statistics<T>::enqueue(T x) {
   seq.push_back(x);
@@ -31,21 +33,13 @@ void statistics<T>::enqueue(T x) {
 }
 
 template<typename T>
-double statistics<T>::get_sum() const {
-  if (not is_ready(__func__)) {
-    return 0.0;
-  }
-  else {
-    return std::accumulate(seq.begin(), seq.end(), 0.0);
-  }
-}
-
-template<typename T>
 double statistics<T>::get_mean() const {
+  //Ensure elements exist
   if (not is_ready(__func__)) {
     return 0.0;
   }
   else {
+    //Mean = Sum of all elements / number of elements
     return 1.0 * (get_sum() / seq.size());
   }
 }
@@ -56,8 +50,21 @@ double statistics<T>::get_STD() const {
     return 0.0;
   }
   else {
+    // Standard Deviation is the sqrt of the variance
     double std = std::sqrt(get_variance());
     return std;
+  }
+}
+
+template<typename T>
+double statistics<T>::get_sum() const {
+  if (not is_ready(__func__)) {
+    return 0.0;
+  }
+  else {
+    //std::accumulate is a good way for getting the sum
+    //set of values
+    return std::accumulate(seq.begin(), seq.end(), 0.0);
   }
 }
 
@@ -73,6 +80,7 @@ double statistics<T>::get_variance() const {
     // And store it into a new container
     std::transform(seq.begin(), seq.end(), seq_diff.begin(),
                     [mean](T x) {return x - mean; });
+    //Need to multiply vector elements by themselves and divide by the size
     double variance =
       std::inner_product(seq_diff.begin(), seq_diff.end(),
                         seq_diff.begin(), 0.0) / seq.size();
@@ -86,6 +94,7 @@ T statistics<T>::get_mode() const {
     return (T)0.0;
   }
   else {
+    // Quickly get the mode without counting each element
     auto tmp =
       std::max_element(mode.begin(), mode.end(),
             [](const std::pair<T, unsigned int> & x,
@@ -95,39 +104,55 @@ T statistics<T>::get_mode() const {
   }
 }
 
-
 template<typename T>
 T statistics<T>::get_median(std::vector<T> vec) const {
+  //Want to do this method on a sorted array for simplicity
+  //Need to handle even and odd length sequences
+  std::vector<T> sorted = vec;
+  std::sort(sorted.begin(), sorted.end());
   if (vec.size() % 2 == 0) {
-    const auto median_it1 = vec.begin() + vec.size() / 2 -1;
-    const auto median_it2 = vec.begin() + vec.size() / 2;
-
-    std::nth_element(vec.begin(), median_it1, vec.end());
-    const auto e1 = *median_it1;
-
-    std::nth_element(vec.begin(), median_it2, vec.size());
-    const auto e2 = *median_it2;
-
-    return (e1 + e2) / 2;
+    const auto median_l = sorted.size() / 2 - 1;
+    const auto median_r = sorted.size() / 2;
+    return (sorted[(median_l + median_r) / 2]);
   }
   else {
-    const auto median_it = vec.begin() + vec.size() / 2;
-    std::nth_element(vec.begin(), median_it, vec.size());
-    return *median_it;
+    return (sorted[sorted.size()/2]);
   }
 }
 
 template<typename T>
-std::vector<T> statistics<T>::get_quartiles() const {
-  std::vector<T> sorted(seq.size());
-  std::sort(seq.begin(), seq.end(), sorted);
-  //Get the median for the second quartile. Then
-  //Get the find the median between the median and the min for the 1st quartile
-  //Get the median between the median and the max for the 3rd quartile
+T statistics<T>::get_median() const {
+  //This is the public function that makes it easier for
+  //The users of the class
+  if (not is_ready(__func__)) {
+    return (T) 0.0;
+  }
+  return get_median(seq);
+}
+
+template<typename T>
+std::map<std::string, T> statistics<T>::get_quartiles() const {
+  if (not is_ready(__func__)) {
+    return std::map<std::string, T>();
+  }
+  else {
+    std::map<std::string, T> ret;
+    std::vector<T> sorted = seq;
+    std::sort(sorted.begin(), sorted.end());
+    std::vector<T> lower_half(sorted.begin(), sorted.begin() + sorted.size() / 2);
+    std::vector<T> upper_half(sorted.begin() + sorted.size() / 2, sorted.end());
+    ret["min"]= sorted[0];
+    ret["q2"] = get_median(sorted);
+    ret["q1"] = get_median(lower_half);
+    ret["q3"] = get_median(upper_half);
+    ret["max"] = sorted[sorted.size()-1];
+    return ret;
+  }
 }
 
 template<typename T>
 bool statistics<T>::is_ready(const std::string func_name) const {
+  //Main function for handling the empty class case.
   if (not seq.empty()) {
     return true;
   }

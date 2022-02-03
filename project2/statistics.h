@@ -2,16 +2,22 @@
 #include<vector>
 #include<ostream>
 #include<string>
-#include<unordered_map>
+#include<map>
 template <class T>
 class statistics {
 private:
   std::vector<T> seq;
-  std::unordered_map<T, unsigned int> mode;
+  std::map<T, unsigned int> mode;
+    //@Brief - returns the median of the sequence
+    //@param[in] vec - Vector to get the median for
+    //@return double - The median of the sequence
+    T get_median(std::vector<T> vec) const;
 public:
   //Constructor
   statistics();
 
+  //Constructor that allows the class to take in an already created
+  //vector of numbers
   statistics(std::vector<T> vec);
   //Destructor
   ~statistics();
@@ -35,7 +41,7 @@ public:
 
   //@Brief - returns the median of the sequence
   //@return double - The median of the sequence
-  T get_median(std::vector<T> vec) const;
+  T get_median() const;
 
   //@Brief - returns the mode of the sequence
   //@return double - The mode of the sequence
@@ -43,7 +49,7 @@ public:
 
   //@Brief - returns the quartiles of the sequence
   //@return - returns the quartiles of the sequence
-  std::vector<T> get_quartiles() const;
+  std::map<std::string, T> get_quartiles() const;
 
   //@Brief - returns the variation of the sequence
   //@return double - the variation of the sequence
@@ -65,5 +71,13 @@ public:
 template<typename T>
 std::ostream & operator<< (std::ostream &out, const statistics<T> & seq) {
   out << seq.to_string();
+  return out;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &out, const std::map<std::string, T> &quart) {
+  for (const auto& elem : quart) {
+    out << elem.first << ": " << elem.second << std::endl;
+  }
   return out;
 }

@@ -37,4 +37,6 @@ int main (void) {
 
   cout << "Variance: " << myStats.get_variance() << endl;
   cout << "STD: " << myStats.get_STD() << endl;
+
+  cout << "Quartiles\n" << myStats.get_quartiles() << endl;
 };
