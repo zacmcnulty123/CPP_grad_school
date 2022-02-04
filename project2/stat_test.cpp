@@ -1,24 +1,77 @@
 #include "statistics.cpp"
 #include "input_helper.h"
+#include "assert.h"
 using namespace std;
 
-int main (void) {
 
-  std::string filename = "myCsv.csv";
+// Test to ensure that a single length list works
+bool single_length_array_test() {
+  cout << __func__ << endl;
+  std::string filename = "./tests/single.csv";
   statistics<double> myStats;
-
   std::vector<double> csv_content;
-
   if (not input_helper::parse_csv(filename, csv_content)) {
     cout << "Something went wrong parsing the csv!" << endl;
+    return false;
   }
   myStats = statistics<double>(csv_content);
-  cout << myStats << endl;
-  cout << "Mode: " << myStats.get_mode() << endl;
-  cout.precision(2);
-  cout << "Average: " << fixed << myStats.get_mean() << endl;
-  cout << "Variance: " << myStats.get_variance() << endl;
-  cout << "STD: " << myStats.get_STD() << endl;
-  cout << "Quartiles\n" << myStats.get_quartiles() << endl;
-  // statistics<string> myStats2 = statistics<string>();
+  cout << "Entered Values: " << myStats << endl;
+  cout << myStats.get_descriptive_statistics() << endl;
+  return true;
+}
+
+// Test that a sequence of length 2 can be used
+bool size_two_length_array_test() {
+  cout << __func__ << endl;
+  std::string filename = "./tests/two.csv";
+  statistics<double> myStats;
+  std::vector<double> csv_content;
+  if (not input_helper::parse_csv(filename, csv_content)) {
+    cout << "Something went wrong parsing the csv!" << endl;
+    return false;
+  }
+  myStats = statistics<double>(csv_content);
+  cout << "Entered Values: " << myStats << endl;
+  cout << myStats.get_descriptive_statistics() << endl;
+  return true;
+}
+
+// Test that odd sized sequences work
+bool odd_size_seq_test() {
+  cout << __func__ << endl;
+  std::string filename = "./tests/odd.csv";
+  statistics<double> myStats;
+  std::vector<double> csv_content;
+  if (not input_helper::parse_csv(filename, csv_content)) {
+    cout << "Something went wrong parsing the csv!" << endl;
+    return false;
+  }
+  myStats = statistics<double>(csv_content);
+  cout << "Entered Values: " << myStats << endl;
+  cout << myStats.get_descriptive_statistics() << endl;
+  return true;
+}
+
+// Test that even sized sequenced work
+bool even_size_seq_test() {
+  cout << __func__ << endl;
+  std::string filename = "./tests/even.csv";
+  statistics<double> myStats;
+  std::vector<double> csv_content;
+  if (not input_helper::parse_csv(filename, csv_content)) {
+    cout << "Something went wrong parsing the csv!" << endl;
+    return false;
+  }
+  myStats = statistics<double>(csv_content);
+  cout << "Entered Values: " << myStats << endl;
+  cout << myStats.get_descriptive_statistics() << endl;
+  return true;
+}
+
+int main (void) {
+  assert(single_length_array_test());
+  assert(size_two_length_array_test()); 
+  assert(odd_size_seq_test());
+  assert(even_size_seq_test());
+  return 0;
 };

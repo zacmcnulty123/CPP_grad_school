@@ -31,7 +31,8 @@ int main (void) {
       cout << input << " is not a number!" << endl;
     }
   }
+  cout << "\nEntered Values: " << stats << endl;
   //Print out the information that we're looking for
-  cout << "Descriptive Statistics: " << stats.get_descriptive_statistics() << endl;
+  cout << "Descriptive Statistics: \n" << stats.get_descriptive_statistics() << endl;
   return 0;
 };

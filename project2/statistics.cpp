@@ -48,6 +48,11 @@ double statistics<T>::get_STD() const {
   if (not is_ready(__func__)) {
     return 0.0;
   }
+  else if (seq.size() == 1) {
+    std::cout << "Cannot! " << __func__
+      << " at least two data points needed!" << std::endl;
+    return 0.0;
+  }
   else {
     // Standard Deviation is the sqrt of the variance
     double std = std::sqrt(get_variance());
@@ -72,6 +77,11 @@ double statistics<T>::get_variance() const {
   if (not is_ready(__func__)) {
     return 0.0;
   }
+  else if (seq.size() == 1) {
+    std::cout << "Cannot! " << __func__
+      << " at least two data points needed!" << std::endl;
+    return 0.0;
+  }
   else {
     //Reference for variance calculation:
     //https://www.mathsisfun.com/data/standard-deviation.html
@@ -83,9 +93,10 @@ double statistics<T>::get_variance() const {
     std::transform(seq.begin(), seq.end(), seq_diff.begin(),
                     [mean](T x) {return x - mean;});
     //Need to multiply vector elements by themselves and divide by the size
+    //This is sample variance given by N - 1. Not population variance
     double variance =
       std::inner_product(seq_diff.begin(), seq_diff.end(),
-                        seq_diff.begin(), 0.0) / seq.size();
+                        seq_diff.begin(), 0.0) / (seq.size() - 1);
     return variance;
   }
 }
@@ -129,13 +140,24 @@ T statistics<T>::get_median() const {
   if (not is_ready(__func__)) {
     return (T) 0.0;
   }
-  return get_median(seq);
+  else {
+    return get_median(seq);
+  }
 }
 
 template<typename T>
 std::map<std::string, T> statistics<T>::get_quartiles() const {
   if (not is_ready(__func__)) {
     return std::map<std::string, T>();
+  }
+  else if (seq.size() == 1) {
+    std::map<std::string, T> ret;
+    ret["min"] = seq[0];
+    ret["q1"] = seq[0];
+    ret["q2"] = seq[0];
+    ret["q3"] = seq[0];
+    ret["max"] = seq[0];
+    return ret;
   }
   else {
     //Getting quartiles are getting the min, max, and
@@ -216,5 +238,6 @@ std::string statistics<T>::to_string(const int start, const int stop) const {
     ss << separator << seq[i];
     separator = ",";
   }
+  ss << std::endl << "Sequence Size: " << seq.size() << std::endl;
   return ss.str();
 }
