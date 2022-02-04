@@ -3,6 +3,11 @@
 #include "assert.h"
 using namespace std;
 
+void zero_length_array_test() {
+  statistics<double> myStats = statistics<double>();
+  cout << "Entered Values: " << myStats << endl;
+  cout << myStats.get_descriptive_statistics() << endl;
+}
 
 // Test to ensure that a single length list works
 bool single_length_array_test() {
@@ -69,6 +74,7 @@ bool even_size_seq_test() {
 }
 
 int main (void) {
+  zero_length_array_test();
   assert(single_length_array_test());
   assert(size_two_length_array_test()); 
   assert(odd_size_seq_test());
