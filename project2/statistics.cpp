@@ -4,12 +4,9 @@
 #include <numeric>
 #include <algorithm>
 template<typename T>
-statistics<T>::statistics(/* args */) {
-  //Sequence to do calculations on
-  seq = std::vector<T>();
-  //easily keep track of the mode element
-  mode = std::map<T, unsigned int>();
-}
+statistics<T>::statistics(/* args */) :
+  seq (std::vector<T>()),
+  mode (std::map<T, unsigned int>()) {}
 
 template<typename T>
 statistics<T>::statistics(std::vector<T> vec) {
@@ -83,20 +80,12 @@ double statistics<T>::get_variance() const {
     return 0.0;
   }
   else {
-    //Reference for variance calculation:
-    //https://www.mathsisfun.com/data/standard-deviation.html
-    double mean = get_mean();
-    std::vector<T> seq_diff(seq.size());
-    //Get the difference between each element in the original vector
-    // And store it into a new container
-    // for each x_i: (x_i - mean)
-    std::transform(seq.begin(), seq.end(), seq_diff.begin(),
-                    [mean](T x) {return x - mean;});
-    //Need to multiply vector elements by themselves and divide by the size
-    //This is sample variance given by N - 1. Not population variance
-    double variance =
-      std::inner_product(seq_diff.begin(), seq_diff.end(),
-                        seq_diff.begin(), 0.0) / (seq.size() - 1);
+    //Calculate the sum once and use it multiple times
+    double sum = get_sum();
+    //inner_product returns the sum of squared values of the passed in sequence
+    //variance = (sum(x_i^2) - (sum(x_i) * sum() / N)) / (N - 1)
+    double variance = (std::inner_product(seq.begin(), seq.end(), seq.begin(), 0.0) -
+              (sum * sum / seq.size())) / (seq.size() - 1);
     return variance;
   }
 }

@@ -4,6 +4,7 @@
 using namespace std;
 
 void zero_length_array_test() {
+  cout << __func__ << endl;
   statistics<double> myStats = statistics<double>();
   cout << "Entered Values: " << myStats << endl;
   cout << myStats.get_descriptive_statistics() << endl;
