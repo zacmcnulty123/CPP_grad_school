@@ -2,6 +2,7 @@
 #include<iostream>
 #include<string>
 #include<sstream>
+#include<vector>
 class board_drawer
 {
   private:
@@ -10,9 +11,6 @@ class board_drawer
     std::string section_break = "___|___|___\n";
     std::string vert_bars = "   |   |   \n";
 
-
-    std::string board_vals_str[3];
-
   public:
     board_drawer(/* args */);
     ~board_drawer();
@@ -20,4 +18,8 @@ class board_drawer
     void redraw_board();
 
     bool mark_board(int loc, char mark);
+
+    int check_win();
+
+    std::vector<int> get_unused_board_positions();
 };
