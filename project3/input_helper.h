@@ -30,6 +30,16 @@ namespace input_helper {
     }
   }
 
+  //@Brief - Converts a string to lowercase
+  //@Param[inout] s - String to convert to lowercase
+  //@Return void
+  void to_lower(std::string & s) {
+    //covert the string to lowercase for easy comparison
+    std::for_each(s.begin(), s.end(), [](char & c) {
+        c = ::tolower(c);
+    });
+  }
+
   //@Brief - Parses CSV values into a vector
   //@Param[in] filename - name of the file
   //@Param[in] out - vector to return

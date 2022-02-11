@@ -38,14 +38,13 @@ int main (void) {
               cout << "Invalid input! please choose a valid position on the board!\n";
               continue;
             }
-            try {
-              //Mark the board
-              board.mark_board(mark, 'x');
-              invalid_input = false;
-            }
-            catch(std::invalid_argument &e) {
-              cout << e.what() << endl;
-            }
+            //Note that mark board throws an exception if the input is invalid.
+            //However, we only get to this point if mark is a valid game action.
+            //Chose not to catch the exception because we will never hit it in
+            //this function
+            //Mark the board
+            board.mark_board(mark, 'x');
+            invalid_input = false;
           }
           else {
             cout << "Invalid input! please choose a position on the board!\n";
@@ -65,20 +64,47 @@ int main (void) {
       try {
         //Mark the board
         board.mark_board(mark, 'o');
-      }
+      } //Catche the exception that mark_board can throw
       catch(std::invalid_argument &e) {
         cout << e.what() << endl;
       }
     }
-    // board.mark_board(mark, 'x');
     if (board.check_win() == 1) {
       board.redraw_board();
       //print the name of the current player who won
       cout << players[counter % 2] << " Won!" << endl;
-      game_active = false;
+      cout << "Would you like to play again? press y" << endl;
+      std::string input;
+      cin >> input;
+      input_helper::to_lower(input);
+      //if the input it y start a new game. Kill the program otherwise
+      if (not input.compare("y")) {
+        //reset the gamestate
+        board.board_reset();
+        counter = 0;
+      }
+      else {
+        //End the game
+        game_active = false;
+      }
     }
     else if (board.check_win() == 0) {
+      board.redraw_board();
       cout << "no winner could be determined!" << endl;
+      cout << "Would you like to play again? press y" << endl;
+      std::string input;
+      cin >> input;
+      input_helper::to_lower(input);
+      //if the input it y start a new game. Kill the program otherwise
+      if (not input.compare("y")) {
+        board.board_reset();
+        //reset the counter and start the game over again
+        counter = 0;
+      }
+      else {
+        //end the game
+        game_active = false;
+      }
     }
     else {
       //swap player's turn

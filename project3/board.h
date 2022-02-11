@@ -42,6 +42,10 @@ class board_drawer
     // 0 otherwise
     int check_win();
 
+    //@Brief - Resets the game state the the beginning
+    //@return void
+    void board_reset();
+
     //@Brief - Returns a list of valid game moved left on the board
     //@Return std::vector<int> list of valid board locations
     std::vector<int> get_unused_board_positions();

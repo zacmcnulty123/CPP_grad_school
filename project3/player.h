@@ -4,8 +4,6 @@
 class player
 {
 private:
-  //Keep track of the number of times this player won
-  unsigned int num_wins;
   //Allow the player to be named
   std::string name;
   //character that the player will mark the game board with
@@ -25,7 +23,6 @@ public:
   //@Return int - chosen random action
   int choose_random_game_action(std::vector<int> valid_pos);
 };
-
 
 std::ostream &operator<<(std::ostream &out, const player & player) {
   std::cout << player.to_string();

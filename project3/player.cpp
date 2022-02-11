@@ -1,6 +1,5 @@
 #include "player.h"
-player::player (std::string player_name, char player_mark) :
-  num_wins(0) {
+player::player (std::string player_name, char player_mark) {
     name = player_name;
     mark = player_mark;
   }

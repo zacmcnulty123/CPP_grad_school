@@ -38,7 +38,7 @@ int board_drawer::check_win() {
     or (board_vals[4] == board_vals[5] and board_vals[5] == board_vals[6])
     or (board_vals[7] == board_vals[8] and board_vals[8] == board_vals[9])
     or (board_vals[1] == board_vals[5] and board_vals[5] == board_vals[9])
-    or (board_vals[3] == board_vals[5] and board_vals[2] == board_vals[7])
+    or (board_vals[3] == board_vals[5] and board_vals[5] == board_vals[7])
     or (board_vals[1] == board_vals[4] and board_vals[4] == board_vals[7])
     or (board_vals[2] == board_vals[5] and board_vals[5] == board_vals[8])
     or (board_vals[3] == board_vals[6] and board_vals[6] == board_vals[9])) {
@@ -68,4 +68,13 @@ std::vector<int> board_drawer::get_unused_board_positions() {
     }
   }
   return ret;
+}
+
+void board_drawer::board_reset() {
+  char vals[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+  //Can't do direct assignment with basic arrays
+  for (unsigned int i = 0; i < sizeof(board_vals); i++) {
+    //Reset all of the values to the initialized values.
+    board_vals[i] = vals[i];
+  }
 }
