@@ -1,1 +1,3 @@
 *.dSYM
+build/*
+CMakeFiles/*
