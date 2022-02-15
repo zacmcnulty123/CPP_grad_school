@@ -20,7 +20,7 @@ const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
 
 //Suits of a card
 const std::array<std::string, 4> SUITS = {
-  "spades", "hearts", "diamonds", "clubs"};
+  "S", "H", "D", "C"};
 
 typedef struct {
     unsigned int value;

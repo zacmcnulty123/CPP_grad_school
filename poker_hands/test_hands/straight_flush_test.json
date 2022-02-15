@@ -1,28 +1,26 @@
 {
   "hands" : [{
     "cards" : ["10", "9", "8", "7", "6"],
-    "suits" : ["clubs", "clubs", "clubs", "clubs", "clubs"]
+    "suits" : ["C", "C", "C", "C", "C"]
   },
   {
     "cards" : ["9", "7", "6", "5", "4"],
-    "suits" : ["hearts", "hearts", "hearts", "hearts", "hearts"]
+    "suits" : ["H", "H", "H", "H", "H"]
   },
   {
     "cards" : ["8", "7", "6", "5", "4"],
-    "suits" : ["hearts", "hearts", "hearts", "hearts", "hearts"]
+    "suits" : ["H", "H", "H", "H", "H"]
   },
   {
     "cards" : ["6", "5", "4", "3", "2"],
-    "suits" : ["spades", "spades", "spades", "spades", "spades"]
+    "suits" : ["S", "S", "S", "S", "S"]
   },
   {
     "cards" : ["7", "6", "5", "4", "3"],
-    "suits" : ["diamonds", "diamonds", "diamonds", "diamonds", "diamonds"]
+    "suits" : ["D", "D", "D", "D", "D"]
   },
   {
-    "cards" : ["7","6","5","4","3"],
-    "suits" : ["spades", "spades", "spades", "spades", "spades"]
+    "cards" : ["7", "6", "5", "4", "3"],
+    "suits" : ["S", "S", "S", "S", "S"]
   }]
-
-
 }
