@@ -10,7 +10,7 @@ int main(int, char**) {
     reader.parse(file, root, true);
     const Json::Value& hands = root["hands"];
     const int size = hands.size();
-    std::array<poker_hand, 6> poker_hands;
+    std::array<PokerHand, 6> pokerHands;
     for (int i = 0; i < hands.size(); i++) {
         const Json::Value& values = hands[i]["cards"];
         const Json::Value& suits = hands[i]["suits"];
@@ -26,13 +26,15 @@ int main(int, char**) {
             continue;
         }
         for (int j = 0; j < values.size(); j++) {
-            card temp;
+            Card temp;
             std::string key;
             key = values[j].asString();
             temp.value = CARD_TO_VALUE_MAP.at(key);
+            temp.displayValue = key;
             temp.suit = suits[j].asString();
-            poker_hands[i].add_card(temp);
+            pokerHands[i].addCard(temp);
         }
-        std::cout << poker_hands[i] << std::endl;
+        std::cout << pokerHands[i];
+        pokerHands[i].getHandValue();
     }
 }
