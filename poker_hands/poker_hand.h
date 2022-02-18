@@ -2,6 +2,7 @@
 #include "card.h"
 #include <vector>
 #include <iostream>
+#include<map>
 class PokerHand
 {
   public:
@@ -15,20 +16,24 @@ class PokerHand
     //Add a card to the poker hand
     void addCard(const Card card);
 
-    
-// TODO: Determine if this should be a const function
-// TODO: Pick a better name
-    int getHandValue();
+    void getHandType();
     ~PokerHand();
   private:
     std::vector<Card> hand;
+    HandTypeE handType;
 
+    bool isStraightFlush() const;
 
-    bool isStraightFlush();
+    bool isStraight() const;
 
-    bool isStraight();
+    bool isFlush() const;
+    
+    int isFullHouse() const;
+
+    int countDuplicates() const;
+
+    int isOneOrTwoPair() const;
 };
-
 
 bool operator>(const PokerHand hand1, const PokerHand hand2) {
   // implement this somewhere
