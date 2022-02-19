@@ -29,15 +29,16 @@ typedef struct {
   std::string suit; 
 } Card;
 
-enum HandTypeE {eNotEnoughCards,
-                eStraight,
-                eStraightFlush,
-                eOnePair,
-                eTwoPair,
-                eThreeOfAKind,
-                eFourOfAKind,
-                eFullHouse,
-                eHighCard};
+enum HandTypeE {eNotEnoughCards = 0,
+                eHighCard = 1,
+                eOnePair = 2,
+                eTwoPair = 3,
+                eThreeOfAKind = 4,
+                eStraight = 5,
+                eFlush = 6,
+                eFullHouse = 7,
+                eFourOfAKind = 8,
+                eStraightFlush = 9};
 
 bool operator<(const Card card1, const Card card2) {
   return (card1.value < card2.value);
@@ -64,15 +65,15 @@ std::ostream &operator<<(std::ostream &out, const HandTypeE type) {
       break;
     }
     case eStraightFlush: {
-      out << "StraightFlush" << std::endl;
+      out << "Straight Flush" << std::endl;
       break;
     }
     case eOnePair: {
-      out << "OnePair" << std::endl;
+      out << "One Pair" << std::endl;
       break;
     }
     case eTwoPair: {
-      out << "TwoPair" << std::endl;
+      out << "Two Pair" << std::endl;
       break;
     }
     case eFourOfAKind: {
@@ -80,15 +81,19 @@ std::ostream &operator<<(std::ostream &out, const HandTypeE type) {
       break;
     }
     case eHighCard: {
-      out << "HighCard" << std::endl;
+      out << "High Card" << std::endl;
       break;
     }
     case eFullHouse: {
-      out << "FullHouse" << std::endl;
+      out << "Full House" << std::endl;
       break;
     }
     case eThreeOfAKind: {
       out << "Three of a Kind" << std::endl;
+      break;
+    }
+    case eFlush: {
+      out << "Flush" << std::endl;
       break;
     }
     default : {
