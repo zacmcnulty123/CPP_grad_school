@@ -25,8 +25,7 @@ struct Props {
   bool isLowStraight = false;
 };
 
-class PokerHand
-{
+class PokerHand {
   public:
     PokerHand(/* args */);
 
@@ -51,19 +50,21 @@ class PokerHand
     Props getProperties() const;
 
     void setHandType();
-    bool isStraightFlush() const;
+    bool isStraightFlush();
 
-    bool isStraight() const;
+    bool isStraight();
 
-    bool isFlush() const;
+    bool isFlush();
     
     bool isFullHouse();
 
     int countDuplicates() const;
-
+    std::map<unsigned int, int> getDuplicateCountMap() const;
     bool isOneOrTwoPair();
 
-    int handleTieBreak(const PokerHand & comp, const HandTypeE handType) const;
+    int handleTypeTieBreak(const PokerHand & comp, const HandTypeE handType) const;
+
+    int handleTieBreakers(const std::vector<unsigned int> tieBreakers) const;
 };
 
 std::ostream &operator<<(std::ostream &out, const PokerHand hand) {

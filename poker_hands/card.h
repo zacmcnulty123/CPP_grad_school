@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include<iostream>
+#include<sstream>
 //Only valid types
 const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
   std::make_pair("2", 2),
@@ -23,18 +24,43 @@ const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
 const std::array<std::string, 4> SUITS = {
   "S", "H", "D", "C"};
 
-typedef struct {
-  unsigned int value;
-  std::string displayValue;
-  std::string suit; 
-} Card;
+class Card {
+  public:
+    Card(std::string val, std::string st) {
+      if ((CARD_TO_VALUE_MAP.count(val)) and 
+      std::find(std::begin(SUITS), std::end(SUITS), st) != std::end(SUITS)) {
+          value = CARD_TO_VALUE_MAP.at(val);
+          displateValue = val;
+          suit = st;
+      }
+      else {
+        throw std::invalid_argument("Arguments given at invalid");
+      }
+    }
+    ~Card() {}
+    unsigned int getValue() const {
+      return value;
+    }
+    std::string to_string() const {
+      std::stringstream ss;
+      ss << displateValue << suit;
+      return ss.str();
+    }
+    std::string getSuit() const {
+      return suit;
+    }
+  private:
+    unsigned int value;
+    std::string displateValue;
+    std::string suit;
+};
 
 bool operator<(const Card card1, const Card card2) {
-  return (card1.value < card2.value);
+  return (card1.getValue() < card2.getValue());
 }
 
 bool operator==(const Card card1, const Card card2) {
-  if ((card1.value == card2.value)) {
+  if ((card1.getValue() == card2.getValue())) {
     return true;
   }
   else {
@@ -43,6 +69,6 @@ bool operator==(const Card card1, const Card card2) {
 }
 
 std::ostream &operator<<(std::ostream &out, const Card card) {
-  out << card.displayValue << card.suit << std::endl;
+  out << card.to_string();
   return out;
 }

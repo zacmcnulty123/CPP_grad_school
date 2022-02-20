@@ -7,30 +7,16 @@ bool readInHands(const Json::Value& hands, std::vector<PokerHand> &pokerHands) {
     for (int i = 0; i < hands.size(); i++) {
         const Json::Value& values = hands[i]["cards"];
         const Json::Value& suits = hands[i]["suits"];
-        //TODO: Fix this in the card class
-        // if (values.size() != suits.size()) {
-        //     std::cerr << "Difference between number of suits and values given" << std::endl;
-        //     continue;
-        // }
-        // if (std::find(SUITS.begin(), SUITS.end(), suits[i].asString()) == SUITS.end()) {
-        //     std::string temp = suits[i].asString();
-        //     std::cerr << "Suit given " << temp << " Does not exist" << std::endl; 
-        //     continue;
-        // }
-        // if (CARD_TO_VALUE_MAP.find(values[i].asString()) == CARD_TO_VALUE_MAP.end()) {
-        //     std::string temp = values[i].asString();
-        //     std::cerr << "Value given " << temp << " Does nto exist" << std::endl;
-        //     continue;
-        // }
+        if (values.size() != suits.size()) {
+            std::cerr << "Difference between number of suits and values given" << std::endl;
+            continue;
+        }
         PokerHand pokerHand = PokerHand();
         for (int j = 0; j < values.size(); j++) {
-            Card temp;
             std::string key;
             key = values[j].asString();
-            temp.value = CARD_TO_VALUE_MAP.at(key);
-            temp.displayValue = key;
-            temp.suit = suits[j].asString();
-            pokerHand.addCard(temp);
+            std::string suit = suits[j].asString();
+            pokerHand.addCard(Card(key, suit));
         }
         pokerHands.push_back(pokerHand);
     }

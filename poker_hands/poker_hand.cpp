@@ -14,10 +14,9 @@ std::string PokerHand::toString() const {
   std::stringstream ss;
   const char* separator = "";
   for (int i = hand.size()-1; i >= 0; i--) {
-    ss << separator << hand[i].displayValue << hand[i].suit;
+    ss << separator << hand[i];
     separator = ",";
   }
-  // ss << std::endl << handType;
   return ss.str();
 }
 
@@ -42,165 +41,102 @@ Props PokerHand::getProperties() const {
   return handProps;
 }
 
-int PokerHand::handleTieBreak(const PokerHand & comp, const HandTypeE handType) const {
+int PokerHand::handleTieBreakers(const std::vector<unsigned int> tieBreakers) const {
+  int ret = 0;
+  for (int i = handProps.tieBreakers.size()-1; i >=0; i--) {
+    if (handProps.tieBreakers[i] == tieBreakers[i]) {
+      continue;
+    }
+    else {
+      ret = (handProps.tieBreakers[i] < tieBreakers[i]) ? 2 : 1;
+      break;
+    }
+  }
+  return ret;
+}
+
+int PokerHand::handleTypeTieBreak(const PokerHand & comp, const HandTypeE handType) const {
   int ret = 0;
   int res = 0;
-  std::vector<Card> compVals = comp.getHand();
-  //TODO: Edge cases: Full House, Three of a kind, Four of a kind,
-  //One pair
+  Props compareProps = comp.getProperties();
   switch (handType) {
     case eStraight:
-    case eStraightFlush:
+    case eStraightFlush: {
+      if (handProps.isLowStraight and compareProps.isLowStraight) {
+        //This means that both hands are a low straight and must be equal
+        break;
+      }
+      else if (handProps.isLowStraight) {
+        ret = 2;
+        break;
+      }
+      else if (compareProps.isLowStraight) {
+        ret = 1;
+        break;
+      }
+      //Fall through otherwise
+    }
     case eHighCard:
     case eFlush:
-      for (int i = hand.size()-1; i >= 0; i--) {
-        if (hand[i] < compVals[i]) {
-          //Found a hand that is the winner.
-          //It is the second hand
-          ret = 2;
-          break;
-        }
-        else if (hand[i] == compVals[i]) {
-          //Hands are still equal need to continue searching
-          ret = 0;
-          continue;
-        }
-        else {
-          //Found a hand that is the winner
-          //It is the first hand
-          ret = 1;
-          break;
-        }
-      }
+      ret = handleTieBreakers(compareProps.tieBreakers);
       break;
     case eFourOfAKind: {
-      Props compareProps = comp.getProperties();
       if (handProps.fourOfAKindVal == compareProps.fourOfAKindVal) {
         //Handle tiebreak
-        if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
-          break;
-        }
-        else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
-          ret = 2;
-        }
-        else {
-          ret = 1;
-        }
-      }
-      else if (handProps.fourOfAKindVal < compareProps.fourOfAKindVal) {
-        ret = 2;
+        ret = handleTieBreakers(compareProps.tieBreakers);
       }
       else {
-        ret = 1;
+        ret = (handProps.fourOfAKindVal < compareProps.fourOfAKindVal) ? 2 : 1;
       }
       break;
     }
     case eThreeOfAKind: {
-      Props compareProps = comp.getProperties();
       if (handProps.threeOfKindVal == compareProps.threeOfKindVal) {
-      //Handle tiebreak
-        if (handProps.tieBreakers[1] == compareProps.tieBreakers[1]) {
-          if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
-            break;
-          }
-          else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
-            ret = 2;
-          }
-          else {
-            ret = 1;
-          }
-        }
-        else if (handProps.tieBreakers[1] < compareProps.tieBreakers[1]) {
-          ret = 2;
-        }
-        else {
-          ret = 1;
-        }
-      }
-      else if (handProps.threeOfKindVal < compareProps.threeOfKindVal) {
-        ret = 2;
+        //Handle tiebreak
+        ret = handleTieBreakers(compareProps.tieBreakers);
       }
       else {
-        ret = 1;
+        ret = (handProps.threeOfKindVal < compareProps.threeOfKindVal) ? 2 : 1;
       }
       break;
     }
     case eTwoPair: {
-      Props compareProps = comp.getProperties();
       if (handProps.twoPairVal[1] == compareProps.twoPairVal[1]) {
         //Handle tiebreak
         if (handProps.twoPairVal[0] == compareProps.twoPairVal[0]) {
           //Handle final tiebreakers
-          if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
-          break;
-          }
-          else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
-            ret = 2;
-          }
-          else {
-            ret = 1;
-          }
+          ret = handleTieBreakers(compareProps.tieBreakers);
         }
-        else if (handProps.twoPairVal[0] < compareProps.twoPairVal[0]) {
-          ret = 2;
+        else { 
+          ret = (handProps.twoPairVal[0] < compareProps.twoPairVal[0]) ? 2 : 1; 
         }
-        else {
-          ret = 1;
-        }
-      }
-      else if (handProps.twoPairVal[1] < compareProps.twoPairVal[1]) {
-        ret = 2;
       }
       else {
-        ret =1;
+        ret = (handProps.twoPairVal[1] < compareProps.twoPairVal[1]) ? 2 : 1;
       }
       break;
     }
-    
     case eOnePair: {
-      Props compareProps = comp.getProperties();
       if (handProps.onePairVal == compareProps.onePairVal) {
         //Handle tiebreakers
-        for (int i = handProps.tieBreakers.size()-1; i >=0; i--) {
-          if (handProps.tieBreakers[i] == compareProps.tieBreakers[i]) {
-            continue;
-          }
-          else if (handProps.tieBreakers[i] < compareProps.tieBreakers[i]) {
-            ret = 2;
-            break;
-          }
-          else {
-            ret = 1;
-            break;
-          }
-        }
-      }
-      else if (handProps.onePairVal < compareProps.onePairVal) {
-        ret = 2;
+        ret = handleTieBreakers(compareProps.tieBreakers);
       }
       else {
-        ret = 1;
+        ret = (handProps.onePairVal < compareProps.onePairVal) ? 2 : 1; 
       }
       break;
     }
     case eFullHouse: {
-      Props compareProps = comp.getProperties();
       if (handProps.fullHouseVal[0] == compareProps.fullHouseVal[0]) {
         if (handProps.fullHouseVal[1] == compareProps.fullHouseVal[1]) {
           break;
         }
-        else if (handProps.fullHouseVal[1] < compareProps.fullHouseVal[1]) {
-          ret = 2;
-        }
         else {
-          ret =1;
+          ret = (handProps.fullHouseVal[1] < compareProps.fullHouseVal[1]) ? 2 : 1;
         }
-      }
-      else if (handProps.fullHouseVal[0] < compareProps.fullHouseVal[0]) {
-        ret = 2;
       }
       else {
-        ret = 1;
+        ret = (handProps.fullHouseVal[0] < compareProps.fullHouseVal[0]) ? 2 : 1; 
       }
     }
     default:
@@ -210,13 +146,13 @@ int PokerHand::handleTieBreak(const PokerHand & comp, const HandTypeE handType) 
 }
 
 int PokerHand::compare(const PokerHand & handToCompare) const {
-  int ret = 1;
-  if (handType < handToCompare.getHandType()) {
-    ret = 2;
+  int ret = 0;
+  if (handType == handToCompare.getHandType()) {
+    ret = handleTypeTieBreak(handToCompare,
+                            handType);
   }
-  else if (handType == handToCompare.getHandType()) {
-    ret = handleTieBreak(handToCompare,
-                        handType);
+  else {
+    ret = (handType < handToCompare.getHandType()) ? 2 : 1;
   }
   return ret;
 }
@@ -237,7 +173,13 @@ void PokerHand::setHandType() {
       handType = eFlush;
     }
     else {
+      //Need to reset tiebreakers since the 
+      //Straight/flush test might have added some values in
+      handProps.tieBreakers = std::vector<unsigned int>();
       handType = eHighCard;
+      for (Card card : hand) {
+        handProps.tieBreakers.push_back(card.getValue());
+      }
     }
   }
   else if (dupeCount == 2) {
@@ -261,14 +203,8 @@ void PokerHand::setHandType() {
   else {
     //This means it is 4 of a kind
     handType = eFourOfAKind;
-    std::map<unsigned int, int> counter;
-    for (int i = 0; i < hand.size(); i++) {
-      counter[hand[i].value]++;
-    }
+    std::map<unsigned int, int> counter = getDuplicateCountMap();
     for (const auto &kv : counter) {
-      //Full house is a 3 of a kind and a 2 of a kind
-      //So is I find a duplicate of both 2 and 3 cards
-      //Then this hand MUST be a full house
       if (kv.second == 4) {
         handProps.fourOfAKindVal = kv.first;
       }
@@ -279,21 +215,43 @@ void PokerHand::setHandType() {
   }
 }
 
-bool PokerHand::isStraight() const {
+bool PokerHand::isStraight() {
+  handProps.tieBreakers = std::vector<unsigned int>();
   bool isStraight = true;
-  for (int i = 1; i < hand.size(); i++) {
-    //Want to check if the value sequence is contiguous
-    //TODO: IF THE HAND CONTAINS AN ACE NEED TO CHECK IF
-    // IT CAN BE COUNTED AS A LOW
-    if (hand[i].value - hand[i-1].value > 1) {
-      isStraight = false;
-      break;
+  handProps.isLowStraight = true;
+  if (hand[hand.size()-1].getValue() == 14 and hand[0].getValue() == 2) {
+    //Need to handle the low straight
+    handProps.tieBreakers.push_back(hand[hand.size()-1].getValue());
+    for (int i = 0; i < hand.size()-2; i++) {
+      if (hand[i].getValue() - hand[i-1].getValue() > 1) {
+        isStraight = false;
+        handProps.isLowStraight = false;
+        break;
+      }
+      else {
+        handProps.tieBreakers.push_back(hand[i].getValue());
+      }
     }
   }
+  else {
+    handProps.isLowStraight = false;
+    handProps.tieBreakers.push_back(hand[0].getValue());
+    for (int i = 1; i < hand.size(); i++) {
+      //Want to check if the value sequence is contiguous
+      if (hand[i].getValue() - hand[i-1].getValue() > 1) {
+        isStraight = false;
+        break;
+      }
+      else {
+        handProps.tieBreakers.push_back(hand[i].getValue());
+      }
+    }
+  }
+  std::sort(handProps.tieBreakers.begin(), handProps.tieBreakers.end());
   return isStraight;
 }
 
-bool PokerHand::isStraightFlush() const {
+bool PokerHand::isStraightFlush() {
   bool isStraightFlush = true;
   if (not isStraight() or not isFlush()) {
     isStraightFlush =  false;
@@ -303,16 +261,17 @@ bool PokerHand::isStraightFlush() const {
 
 bool PokerHand::isOneOrTwoPair() {
   bool isOnePair = true;
-  std::map<unsigned int, int> counter;
-  for (int i = 0; i < hand.size(); i++) {
-    counter[hand[i].value]++;
-  }
+  std::map<unsigned int, int> counter = getDuplicateCountMap();
   unsigned int count = 0;
   for (const auto &kv : counter) {
     //2 means that there are multiple of the given value
     //Want to know how many pairs exist
     if (kv.second == 2) {
+      handProps.onePairVal = kv.first;
+      handProps.twoPairVal[count] = kv.first;
       count++;
+    } else {
+      handProps.tieBreakers.push_back(kv.first);
     }
   }
   //If two pairs exists this is a twoPair hand
@@ -320,105 +279,72 @@ bool PokerHand::isOneOrTwoPair() {
   if (count == 2) {
     isOnePair = false;
   }
-  if (isOnePair) {
-    for (const auto &kv : counter) {
-      //2 means that there are multiple of the given value
-      //Want to know how many pairs exist
-      if (kv.second == 2) {
-        handProps.onePairVal = kv.first;
-      }
-      else {
-        handProps.tieBreakers.push_back(kv.first);
-      }
-    }
-  }
-  else {
-    int i = 0;
-    for (const auto &kv : counter) {
-      //2 means that there are multiple of the given value
-      //Want to know how many pairs exist
-      if (kv.second == 2) {
-        handProps.twoPairVal[i++] = kv.first;
-      }
-      else {
-        handProps.tieBreakers.push_back(kv.first);
-      }
-    }
-    std::sort(handProps.twoPairVal.begin(), handProps.twoPairVal.end());
-  }
+  std::sort(handProps.twoPairVal.begin(), handProps.twoPairVal.end());
   std::sort(handProps.tieBreakers.begin(), handProps.tieBreakers.end());
   return isOnePair;
 }
 
 bool PokerHand::isFullHouse() {
   bool isFullHouse = true;
-  std::map<unsigned int, int> counter;
-  for (int i = 0; i < hand.size(); i++) {
-    counter[hand[i].value]++;
-  }
+  std::map<unsigned int, int> counter = getDuplicateCountMap();
   unsigned int count = 0;
   for (const auto &kv : counter) {
     //Full house is a 3 of a kind and a 2 of a kind
     //So is I find a duplicate of both 2 and 3 cards
     //Then this hand MUST be a full house
     if (kv.second == 3) {
+      handProps.fullHouseVal[0] = kv.first;
+      handProps.threeOfKindVal = kv.first;
       count++;
     }
     else if (kv.second == 2) {
+      handProps.fullHouseVal[1] = kv.first;
       count++;
+    }
+    else {
+      handProps.tieBreakers.push_back(kv.first);
     }
   }
   if (count == 1) {
     isFullHouse = false;
   }
-  if (isFullHouse) {
-    for (auto kv : counter) {
-      if (kv.second == 3) {
-        handProps.fullHouseVal[0] = kv.first;
-      }
-      else if (kv.second == 2) {
-        handProps.fullHouseVal[1] = kv.first;
-      }
-    }
-  }
-  else {
-    for (auto kv : counter) {
-      if (kv.second == 3) {
-        handProps.threeOfKindVal = kv.first;
-      }
-      else {
-        handProps.tieBreakers.push_back(kv.first);
-      }
-    }
-  }
+  std::sort(handProps.tieBreakers.begin(), handProps.tieBreakers.end());
   return isFullHouse;
 }
 
-bool PokerHand::isFlush() const {
+bool PokerHand::isFlush() {
+  handProps.tieBreakers = std::vector<unsigned int>();
   bool isFlush = true;;
-  std::string tempSuit = hand[0].suit;
-  for (int i = 1; i < hand.size(); i++) {
+  std::string tempSuit = hand[0].getSuit();
+  for (int i = 0; i < hand.size(); i++) {
     //std::string compare returns 1 if it is not
     // Equal so the logic is inverse
-    if (tempSuit.compare(hand[i].suit)) {
+    if (tempSuit.compare(hand[i].getSuit())) {
       isFlush = false;
     }
+    handProps.tieBreakers.push_back(hand[i].getValue());
   }
+  std::sort(handProps.tieBreakers.begin(), handProps.tieBreakers.end());
   return isFlush;
 }
 
 int PokerHand::countDuplicates() const {
-  std::map<std::string, int> counter;
-  for (int i = 0; i < hand.size(); i++) {
-    counter[hand[i].displayValue]++;
-  }
+  std::map<unsigned int, int> counter = getDuplicateCountMap();
   if (counter.size() == hand.size()) {
     return 0;
   }
   auto tmp =
       std::max_element(counter.begin(), counter.end(),
-            [](const std::pair<std::string, unsigned int> & x,
-              const std::pair<std::string, unsigned int> & y)->bool 
+            [](const std::pair<unsigned int, unsigned int> & x,
+              const std::pair<unsigned int, unsigned int> & y)->bool 
               {return x.second < y.second;});
   return tmp->second;
+}
+
+std::map<unsigned int, int> PokerHand::getDuplicateCountMap() const {
+  std::map<unsigned int, int> counter;
+  for (int i = 0; i < hand.size(); i++) {
+    counter[hand[i].getValue()]++;
+  }
+  return counter;
 }
