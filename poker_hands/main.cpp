@@ -3,7 +3,6 @@
 #include "json/json.h"
 #include<fstream>
 #include <filesystem>
-#include "hand_comparer.h"
 bool readInHands(const Json::Value& hands, std::vector<PokerHand> &pokerHands) {
     for (int i = 0; i < hands.size(); i++) {
         const Json::Value& values = hands[i]["cards"];
@@ -63,7 +62,7 @@ std::string getTestFilePath(const std::string fileRelativePath) {
 std::string verboseTestHandCompare(const std::vector<PokerHand> & pokerHands) {
     std::stringstream ss;
     for (int i = 1; i < pokerHands.size(); i+=2 ) {
-        int j = compareHands(pokerHands[i-1], pokerHands[i]);
+        int j = pokerHands[i-1].compare(pokerHands[i]);
         if (j == 1) {
             ss << pokerHands[i-1] << " is greater than " <<
             pokerHands[i];
@@ -145,11 +144,20 @@ bool highCardTest(const std::string fs) {
     return true;
 }
 
+bool straightTest(const std::string fs) {
+    std::cout << __func__ << std::endl;
+    std::vector<PokerHand> pokerHands;
+    parseFile(getTestFilePath(fs), pokerHands);
+    std::cout << verboseTestHandCompare(pokerHands);
+    return true;
+}
+
 int main(int, char**) {
     straightFlushTest("../test_hands/straight_flush_test.json");
     FourOfAKindTest("../test_hands/four_of_a_kind_test.json");
     fullHouseTest("../test_hands/full_house_test.json");
     flushTest("../test_hands/flush_test.json");
+    straightTest("../test_hands/straight_test.json");
     threeOfAKindTest("../test_hands/three_of_a_kind_test.json");
     twoPairTest("../test_hands/two_pair_test.json");
     OnePairTest("../test_hands/OnePair-Test.json");

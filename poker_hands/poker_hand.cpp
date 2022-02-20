@@ -13,8 +13,8 @@ PokerHand::~PokerHand() {}
 std::string PokerHand::toString() const {
   std::stringstream ss;
   const char* separator = "";
-  for (Card card : hand) {
-    ss << separator << card.displayValue << card.suit;
+  for (int i = hand.size()-1; i >= 0; i--) {
+    ss << separator << hand[i].displayValue << hand[i].suit;
     separator = ",";
   }
   // ss << std::endl << handType;
@@ -36,6 +36,189 @@ HandTypeE PokerHand::getHandType() const {
 
 std::vector<Card> PokerHand::getHand() const {
   return hand;
+}
+
+Props PokerHand::getProperties() const {
+  return handProps;
+}
+
+int PokerHand::handleTieBreak(const PokerHand & comp, const HandTypeE handType) const {
+  int ret = 0;
+  int res = 0;
+  std::vector<Card> compVals = comp.getHand();
+  //TODO: Edge cases: Full House, Three of a kind, Four of a kind,
+  //One pair
+  switch (handType) {
+    case eStraight:
+    case eStraightFlush:
+    case eHighCard:
+    case eFlush:
+      for (int i = hand.size()-1; i >= 0; i--) {
+        if (hand[i] < compVals[i]) {
+          //Found a hand that is the winner.
+          //It is the second hand
+          ret = 2;
+          break;
+        }
+        else if (hand[i] == compVals[i]) {
+          //Hands are still equal need to continue searching
+          ret = 0;
+          continue;
+        }
+        else {
+          //Found a hand that is the winner
+          //It is the first hand
+          ret = 1;
+          break;
+        }
+      }
+      break;
+    case eFourOfAKind: {
+      Props compareProps = comp.getProperties();
+      if (handProps.fourOfAKindVal == compareProps.fourOfAKindVal) {
+        //Handle tiebreak
+        if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
+          break;
+        }
+        else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
+          ret = 2;
+        }
+        else {
+          ret = 1;
+        }
+      }
+      else if (handProps.fourOfAKindVal < compareProps.fourOfAKindVal) {
+        ret = 2;
+      }
+      else {
+        ret = 1;
+      }
+      break;
+    }
+    case eThreeOfAKind: {
+      Props compareProps = comp.getProperties();
+      if (handProps.threeOfKindVal == compareProps.threeOfKindVal) {
+      //Handle tiebreak
+        if (handProps.tieBreakers[1] == compareProps.tieBreakers[1]) {
+          if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
+            break;
+          }
+          else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
+            ret = 2;
+          }
+          else {
+            ret = 1;
+          }
+        }
+        else if (handProps.tieBreakers[1] < compareProps.tieBreakers[1]) {
+          ret = 2;
+        }
+        else {
+          ret = 1;
+        }
+      }
+      else if (handProps.threeOfKindVal < compareProps.threeOfKindVal) {
+        ret = 2;
+      }
+      else {
+        ret = 1;
+      }
+      break;
+    }
+    case eTwoPair: {
+      Props compareProps = comp.getProperties();
+      if (handProps.twoPairVal[1] == compareProps.twoPairVal[1]) {
+        //Handle tiebreak
+        if (handProps.twoPairVal[0] == compareProps.twoPairVal[0]) {
+          //Handle final tiebreakers
+          if (handProps.tieBreakers[0] == compareProps.tieBreakers[0]) {
+          break;
+          }
+          else if (handProps.tieBreakers[0] < compareProps.tieBreakers[0]) {
+            ret = 2;
+          }
+          else {
+            ret = 1;
+          }
+        }
+        else if (handProps.twoPairVal[0] < compareProps.twoPairVal[0]) {
+          ret = 2;
+        }
+        else {
+          ret = 1;
+        }
+      }
+      else if (handProps.twoPairVal[1] < compareProps.twoPairVal[1]) {
+        ret = 2;
+      }
+      else {
+        ret =1;
+      }
+      break;
+    }
+    
+    case eOnePair: {
+      Props compareProps = comp.getProperties();
+      if (handProps.onePairVal == compareProps.onePairVal) {
+        //Handle tiebreakers
+        for (int i = handProps.tieBreakers.size()-1; i >=0; i--) {
+          if (handProps.tieBreakers[i] == compareProps.tieBreakers[i]) {
+            continue;
+          }
+          else if (handProps.tieBreakers[i] < compareProps.tieBreakers[i]) {
+            ret = 2;
+            break;
+          }
+          else {
+            ret = 1;
+            break;
+          }
+        }
+      }
+      else if (handProps.onePairVal < compareProps.onePairVal) {
+        ret = 2;
+      }
+      else {
+        ret = 1;
+      }
+      break;
+    }
+    case eFullHouse: {
+      Props compareProps = comp.getProperties();
+      if (handProps.fullHouseVal[0] == compareProps.fullHouseVal[0]) {
+        if (handProps.fullHouseVal[1] == compareProps.fullHouseVal[1]) {
+          break;
+        }
+        else if (handProps.fullHouseVal[1] < compareProps.fullHouseVal[1]) {
+          ret = 2;
+        }
+        else {
+          ret =1;
+        }
+      }
+      else if (handProps.fullHouseVal[0] < compareProps.fullHouseVal[0]) {
+        ret = 2;
+      }
+      else {
+        ret = 1;
+      }
+    }
+    default:
+      break;
+  }
+  return ret;
+}
+
+int PokerHand::compare(const PokerHand & handToCompare) const {
+  int ret = 1;
+  if (handType < handToCompare.getHandType()) {
+    ret = 2;
+  }
+  else if (handType == handToCompare.getHandType()) {
+    ret = handleTieBreak(handToCompare,
+                        handType);
+  }
+  return ret;
 }
 
 void PokerHand::setHandType() {
@@ -78,6 +261,21 @@ void PokerHand::setHandType() {
   else {
     //This means it is 4 of a kind
     handType = eFourOfAKind;
+    std::map<unsigned int, int> counter;
+    for (int i = 0; i < hand.size(); i++) {
+      counter[hand[i].value]++;
+    }
+    for (const auto &kv : counter) {
+      //Full house is a 3 of a kind and a 2 of a kind
+      //So is I find a duplicate of both 2 and 3 cards
+      //Then this hand MUST be a full house
+      if (kv.second == 4) {
+        handProps.fourOfAKindVal = kv.first;
+      }
+      else {
+        handProps.tieBreakers.push_back(kv.first);
+      }
+    }
   }
 }
 
@@ -103,11 +301,11 @@ bool PokerHand::isStraightFlush() const {
   return isStraightFlush;
 }
 
-bool PokerHand::isOneOrTwoPair() const {
+bool PokerHand::isOneOrTwoPair() {
   bool isOnePair = true;
-  std::map<std::string, int> counter;
+  std::map<unsigned int, int> counter;
   for (int i = 0; i < hand.size(); i++) {
-    counter[hand[i].displayValue]++;
+    counter[hand[i].value]++;
   }
   unsigned int count = 0;
   for (const auto &kv : counter) {
@@ -122,14 +320,41 @@ bool PokerHand::isOneOrTwoPair() const {
   if (count == 2) {
     isOnePair = false;
   }
+  if (isOnePair) {
+    for (const auto &kv : counter) {
+      //2 means that there are multiple of the given value
+      //Want to know how many pairs exist
+      if (kv.second == 2) {
+        handProps.onePairVal = kv.first;
+      }
+      else {
+        handProps.tieBreakers.push_back(kv.first);
+      }
+    }
+  }
+  else {
+    int i = 0;
+    for (const auto &kv : counter) {
+      //2 means that there are multiple of the given value
+      //Want to know how many pairs exist
+      if (kv.second == 2) {
+        handProps.twoPairVal[i++] = kv.first;
+      }
+      else {
+        handProps.tieBreakers.push_back(kv.first);
+      }
+    }
+    std::sort(handProps.twoPairVal.begin(), handProps.twoPairVal.end());
+  }
+  std::sort(handProps.tieBreakers.begin(), handProps.tieBreakers.end());
   return isOnePair;
 }
 
-bool PokerHand::isFullHouse() const {
+bool PokerHand::isFullHouse() {
   bool isFullHouse = true;
-  std::map<std::string, int> counter;
+  std::map<unsigned int, int> counter;
   for (int i = 0; i < hand.size(); i++) {
-    counter[hand[i].displayValue]++;
+    counter[hand[i].value]++;
   }
   unsigned int count = 0;
   for (const auto &kv : counter) {
@@ -145,6 +370,26 @@ bool PokerHand::isFullHouse() const {
   }
   if (count == 1) {
     isFullHouse = false;
+  }
+  if (isFullHouse) {
+    for (auto kv : counter) {
+      if (kv.second == 3) {
+        handProps.fullHouseVal[0] = kv.first;
+      }
+      else if (kv.second == 2) {
+        handProps.fullHouseVal[1] = kv.first;
+      }
+    }
+  }
+  else {
+    for (auto kv : counter) {
+      if (kv.second == 3) {
+        handProps.threeOfKindVal = kv.first;
+      }
+      else {
+        handProps.tieBreakers.push_back(kv.first);
+      }
+    }
   }
   return isFullHouse;
 }

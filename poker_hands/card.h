@@ -29,17 +29,6 @@ typedef struct {
   std::string suit; 
 } Card;
 
-enum HandTypeE {eNotEnoughCards = 0,
-                eHighCard = 1,
-                eOnePair = 2,
-                eTwoPair = 3,
-                eThreeOfAKind = 4,
-                eStraight = 5,
-                eFlush = 6,
-                eFullHouse = 7,
-                eFourOfAKind = 8,
-                eStraightFlush = 9};
-
 bool operator<(const Card card1, const Card card2) {
   return (card1.value < card2.value);
 }
@@ -55,50 +44,5 @@ bool operator==(const Card card1, const Card card2) {
 
 std::ostream &operator<<(std::ostream &out, const Card card) {
   out << card.displayValue << card.suit << std::endl;
-  return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const HandTypeE type) {
-  switch(type) {
-    case eStraight: {
-      out << "Straight" << std::endl;
-      break;
-    }
-    case eStraightFlush: {
-      out << "Straight Flush" << std::endl;
-      break;
-    }
-    case eOnePair: {
-      out << "One Pair" << std::endl;
-      break;
-    }
-    case eTwoPair: {
-      out << "Two Pair" << std::endl;
-      break;
-    }
-    case eFourOfAKind: {
-      out << "Four of a Kind" << std::endl;
-      break;
-    }
-    case eHighCard: {
-      out << "High Card" << std::endl;
-      break;
-    }
-    case eFullHouse: {
-      out << "Full House" << std::endl;
-      break;
-    }
-    case eThreeOfAKind: {
-      out << "Three of a Kind" << std::endl;
-      break;
-    }
-    case eFlush: {
-      out << "Flush" << std::endl;
-      break;
-    }
-    default : {
-      out << "Type doesn't exist" << std::endl;
-    }
-  }
   return out;
 }
