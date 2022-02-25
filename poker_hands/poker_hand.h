@@ -1,7 +1,7 @@
 #pragma once
-#include "card.h"
-#include <vector>
-#include <iostream>
+#include"card.h"
+#include<vector>
+#include<iostream>
 #include<map>
 
 // Explicitly defined enum that defines
@@ -135,11 +135,24 @@ class PokerHand {
     Props handProps;
 };
 
-//Stream operator for each std::io usage in caller
+//Stream operator for each stream usage in caller
 //Prints the contents of the hand in a human readable manner
 std::ostream &operator<<(std::ostream &out, const PokerHand hand) {
   out << hand.toString();
   return out;
+}
+
+//Set of operators for handling == < and > for pokerhands
+bool operator==(const PokerHand hand1, const PokerHand hand2) {
+  return (hand1.compare(hand2) == 0);
+}
+
+bool operator<(const PokerHand hand1, const PokerHand hand2) {
+  return (hand1.compare(hand2) == 2);
+}
+
+bool operator>(const PokerHand hand1, const PokerHand hand2) {
+  return (hand1.compare(hand2) == 1);
 }
 
 //Stream operator to stringify the enumeration of the hand's type

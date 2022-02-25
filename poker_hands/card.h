@@ -37,7 +37,7 @@ class Card {
       if ((CARD_TO_VALUE_MAP.count(val)) and 
       std::find(std::begin(SUITS), std::end(SUITS), st) != std::end(SUITS)) {
           value = CARD_TO_VALUE_MAP.at(val);
-          displateValue = val;
+          displayValue = val;
           suit = st;
       }
       else {
@@ -56,9 +56,9 @@ class Card {
 
     //@Brief - Returns a string representation for the card
     //@return std::string - String representation for the card
-    std::string to_string() const {
+    std::string toString() const {
       std::stringstream ss;
-      ss << displateValue << suit;
+      ss << displayValue << suit;
       return ss.str();
     }
 
@@ -71,7 +71,7 @@ class Card {
     //Raw value of the card
     unsigned int value;
     //Representation of the value of the card
-    std::string displateValue;
+    std::string displayValue;
     //Suit of the card
     std::string suit;
 };
@@ -96,6 +96,6 @@ bool operator==(const Card card1, const Card card2) {
 //Stream operator overload for quality of life of classes that 
 // want to use the card class.
 std::ostream &operator<<(std::ostream &out, const Card card) {
-  out << card.to_string();
+  out << card.toString();
   return out;
 }

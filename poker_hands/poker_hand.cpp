@@ -1,9 +1,8 @@
 #pragma once
-#include "poker_hand.h"
-#include <sstream>
-#include <map>
-#include <algorithm>
-#include <numeric>
+#include"poker_hand.h"
+#include<sstream>
+#include<algorithm>
+#include<numeric>
 PokerHand::PokerHand(/* args */) : 
   hand(std::vector<Card>()),
   handType (eNotEnoughCards) {}
@@ -195,7 +194,7 @@ int PokerHand::compare(const PokerHand & handToCompare) const {
   //Need to have enough cards in both hands to compare.
   if (handType == HandTypeE::eNotEnoughCards
     or handToCompare.getHandType() == HandTypeE::eNotEnoughCards) {
-      throw std::invalid_argument("Ones of the hands do not" +
+      throw std::invalid_argument("Ones of the hands do not"
         "have enough cards to compare");
   }
   //NOTE from Zac: Wasn't sure if a hand with enough cards to compare
