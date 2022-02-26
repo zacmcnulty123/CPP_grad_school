@@ -5,7 +5,7 @@
 #include<numeric>
 PokerHand::PokerHand(/* args */) : 
   hand(std::vector<Card>()),
-  handType (eNotEnoughCards) {}
+  handType (HandTypeE::eNotEnoughCards) {}
 
 PokerHand::~PokerHand() {}
 
@@ -49,7 +49,7 @@ HandTypeE PokerHand::getHandType() const {
   return handType;
 }
 
-Props PokerHand::getProperties() const {
+PokerHand::Props PokerHand::getProperties() const {
   return handProps;
 }
 
@@ -78,8 +78,8 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
   //Get the list of properties of the hand we'd like to compare against
   Props compareProps = comp.getProperties();
   switch (handType) {
-    case eStraight:
-    case eStraightFlush: {
+    case HandTypeE::eStraight:
+    case HandTypeE::eStraightFlush: {
       //Handle the low straight case
       if (handProps.isLowStraight and compareProps.isLowStraight) {
         //This means that both hands are a low straight and must be equal
@@ -98,12 +98,12 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
       }
       //Fall through otherwise
     }
-    case eHighCard:
-    case eFlush:
+    case HandTypeE::eHighCard:
+    case HandTypeE::eFlush:
       //Tie breaks handled via highest ranked card
       ret = handleTieBreakers(compareProps.tieBreakers);
       break;
-    case eFourOfAKind: {
+    case HandTypeE::eFourOfAKind: {
       //If the 4ok card is equal we need to handle the tiebreak
       if (handProps.fourOfAKindVal == compareProps.fourOfAKindVal) {
         //Handle tiebreak. Done by comparing the highest kind in the tiebreakers
@@ -116,7 +116,7 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
       }
       break;
     }
-    case eThreeOfAKind: {
+    case HandTypeE::eThreeOfAKind: {
       //If our 3ok card is equal handle the tiebreak
       if (handProps.threeOfKindVal == compareProps.threeOfKindVal) {
         //Handle tiebreak. Done by comparing the tiebreak cards. Take the
@@ -129,7 +129,7 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
       }
       break;
     }
-    case eTwoPair: {
+    case HandTypeE::eTwoPair: {
       //Compare the highest of the two pairs, if equal check the
       //lower pairs
       if (handProps.twoPairVal[1] == compareProps.twoPairVal[1]) {
@@ -151,7 +151,7 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
       }
       break;
     }
-    case eOnePair: {
+    case HandTypeE::eOnePair: {
       //If the pairs are the same; handle tiebreakers
       if (handProps.onePairVal == compareProps.onePairVal) {
         //Handle tiebreakers
@@ -163,7 +163,7 @@ int PokerHand::handleTypeTieBreak(const PokerHand & comp) const {
       }
       break;
     }
-    case eFullHouse: {
+    case HandTypeE::eFullHouse: {
       //Compare the 3s in the fullhouse; If equal go to the 2s
       if (handProps.fullHouseVal[0] == compareProps.fullHouseVal[0]) {
         //If the 2s are equal; The hands are equal
@@ -224,20 +224,20 @@ void PokerHand::setHandProperties() {
   if (dupeCount == 0) {
     //Check for hands that involve singletons
     if (isStraightFlush()) {
-    handType = eStraightFlush;
+    handType = HandTypeE::eStraightFlush;
     }
     else if (isStraight()) {
-      handType = eStraight;
+      handType = HandTypeE::eStraight;
     }
     else if (isFlush()) {
-      handType = eFlush;
+      handType = HandTypeE::eFlush;
     }
     else {
       //Need to reset tiebreakers since the 
       //Straight/flush test might have added some values in
       handProps.tieBreakers = std::vector<unsigned int>();
       //Hand must be highCard.
-      handType = eHighCard;
+      handType = HandTypeE::eHighCard;
       for (Card card : hand) {
         handProps.tieBreakers.push_back(card.getValue());
       }
@@ -247,26 +247,26 @@ void PokerHand::setHandProperties() {
     //If the max number of duplicates in a hand is 2
     //then it is either a two pair or a one pair
     if (isOnePair()) {
-      handType = eOnePair;
+      handType = HandTypeE::eOnePair;
     }
     else {
-      handType = eTwoPair;
+      handType = HandTypeE::eTwoPair;
     }
   }
   else if (dupeCount == 3) {
     //If the max number of duplicates in a hand is 3
     //then it is either a fullhouse or a 3ok
     if (isFullHouse()) {
-      handType = eFullHouse;
+      handType = HandTypeE::eFullHouse;
     }
     else {
-      handType = eThreeOfAKind;
+      handType = HandTypeE::eThreeOfAKind;
     }
   }
   else {
     //Can only have a max of 4 duplicates. Which means this is 
     // a 4ok hand
-    handType = eFourOfAKind;
+    handType = HandTypeE::eFourOfAKind;
     //Set hand properties
     std::map<unsigned int, int> counter = getDuplicateCountMap();
     for (const auto &kv : counter) {

@@ -10,7 +10,7 @@
 // Type
 // Ordered like to for keeping track of which hand types
 // are greater than others.
-enum HandTypeE {eNotEnoughCards = 0,
+enum class HandTypeE {eNotEnoughCards = 0,
                 eHighCard = 1,
                 eOnePair = 2,
                 eTwoPair = 3,
@@ -20,26 +20,6 @@ enum HandTypeE {eNotEnoughCards = 0,
                 eFullHouse = 7,
                 eFourOfAKind = 8,
                 eStraightFlush = 9};
-
-// List of properties that the poker_hand
-// class wants to maintain about the hand
-// These are used for hand comparisons
-struct Props {
-  //Value of the three of a kind card for 3oK hands
-  unsigned int threeOfKindVal = 0;
-  //Values for the 2 pairs of a 2P hand
-  std::array<unsigned, 2> twoPairVal;
-  //Value of the pair in a 1P hand
-  unsigned int onePairVal = 0;
-  //Values of the 3ok and 1P parts of a full house
-  std::array<unsigned int, 2> fullHouseVal;
-  //Value of the 4ok card in a 4ok hand
-  unsigned int fourOfAKindVal = 0;
-  //List of tiebreaker cards that are used when handtypes match
-  std::vector<unsigned int> tieBreakers;
-  bool isLowStraight = false;
-}; // NOTE from Zac: Wanted to make this a union type so that values are set
-// based on their handtype but I couldn't figure it out.
 
 class PokerHand {
   public:
@@ -66,6 +46,26 @@ class PokerHand {
 
     //Destructor
     ~PokerHand();
+
+    // List of properties that the poker_hand
+    // class wants to maintain about the hand
+    // These are used for hand comparisons
+    struct Props {
+      //Value of the three of a kind card for 3oK hands
+      unsigned int threeOfKindVal = 0;
+      //Values for the 2 pairs of a 2P hand
+      std::array<unsigned, 2> twoPairVal;
+      //Value of the pair in a 1P hand
+      unsigned int onePairVal = 0;
+      //Values of the 3ok and 1P parts of a full house
+      std::array<unsigned int, 2> fullHouseVal;
+      //Value of the 4ok card in a 4ok hand
+      unsigned int fourOfAKindVal = 0;
+      //List of tiebreaker cards that are used when handtypes match
+      std::vector<unsigned int> tieBreakers;
+      bool isLowStraight = false;
+    }; // NOTE from Zac: Wanted to make this a union type so that values are set
+    // based on their handtype but I couldn't figure it out.
   private:
     //@Brief - Returns the enumeration value for the type
     // of hand the current hand is.
@@ -132,7 +132,7 @@ class PokerHand {
     int handleTieBreakers(const std::vector<unsigned int> tieBreakers) const;
     std::vector<Card> hand;
     HandTypeE handType;
-    Props handProps;
+    PokerHand::Props handProps;
 };
 
 //Stream operator for each stream usage in caller
@@ -158,39 +158,39 @@ bool operator>(const PokerHand hand1, const PokerHand hand2) {
 //Stream operator to stringify the enumeration of the hand's type
 std::ostream &operator<<(std::ostream &out, const HandTypeE type) {
   switch(type) {
-    case eStraight: {
+    case HandTypeE::eStraight: {
       out << "Straight" << std::endl;
       break;
     }
-    case eStraightFlush: {
+    case HandTypeE::eStraightFlush: {
       out << "Straight Flush" << std::endl;
       break;
     }
-    case eOnePair: {
+    case HandTypeE::eOnePair: {
       out << "One Pair" << std::endl;
       break;
     }
-    case eTwoPair: {
+    case HandTypeE::eTwoPair: {
       out << "Two Pair" << std::endl;
       break;
     }
-    case eFourOfAKind: {
+    case HandTypeE::eFourOfAKind: {
       out << "Four of a Kind" << std::endl;
       break;
     }
-    case eHighCard: {
+    case HandTypeE::eHighCard: {
       out << "High Card" << std::endl;
       break;
     }
-    case eFullHouse: {
+    case HandTypeE::eFullHouse: {
       out << "Full House" << std::endl;
       break;
     }
-    case eThreeOfAKind: {
+    case HandTypeE::eThreeOfAKind: {
       out << "Three of a Kind" << std::endl;
       break;
     }
-    case eFlush: {
+    case HandTypeE::eFlush: {
       out << "Flush" << std::endl;
       break;
     }

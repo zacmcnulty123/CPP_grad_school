@@ -5,7 +5,7 @@
 #include<iostream>
 #include<sstream>
 //Only valid types
-const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
+extern const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
   std::make_pair("2", 2),
   std::make_pair("3", 3),
   std::make_pair("4", 4),
@@ -24,7 +24,7 @@ const std::map<std::string, unsigned int> CARD_TO_VALUE_MAP = {
   std::make_pair("A", 14)};
 
 //Suits of a card
-const std::array<std::string, 4> SUITS = {
+extern const std::array<std::string, 4> SUITS = {
   "S", "H", "D", "C"};
 
 class Card {
