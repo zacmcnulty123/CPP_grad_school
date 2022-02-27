@@ -1,0 +1,23 @@
+@startuml
+class Event {
+  __Public Methods__
+  +Event()
+  +Event(double likelihood)
+  ~Event()
+  +double getLikelihood() const
+  +void setLikelihood()
+  +double getAandBLikelihood(const Event & A, const Event & B) const
+  +double getAorBLikelihood(const Event & A, const Event & B) const
+  +double getANorBLikelihood(const Event & A, const Event & B) const
+  +double getANotBLikelihood(const Event & A, const Event & B) const
+  __Private Data Members__
+  double likelihood
+  double notLikelihood
+  __Operator Overloads__
+  Event &
+  Event |
+  Event ^
+  Event -
+}
+
+@enduml
