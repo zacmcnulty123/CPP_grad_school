@@ -62,6 +62,7 @@ public:
   }
 
   double operator &(const Event & B) {
+    this->likelihood += 0.1;
     return (this->getAandBLikelihood(B));
   }
 
