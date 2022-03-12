@@ -54,8 +54,8 @@ double operator &(const Event &A, const Event & B) {
   return (A.getProb() * B.getProb());
 }
 
-double operator &=(const Event & A, const Event & B) {
-  return (A & B);
+void operator &=(Event & A, const Event & B) {
+  A.setProb((A & B));
 }
 
 double operator |(const Event & A, const Event & B) {
@@ -63,18 +63,18 @@ double operator |(const Event & A, const Event & B) {
   return (A.getProb() + B.getProb() - (A & B));
 }
 
-double operator |=(const Event & A, const Event & B) {
-  return (A | B);
+void operator |=(Event & A, const Event & B) {
+  A.setProb((A | B));
 }
 
 double operator ^(const Event & A, const Event & B) {
   //P(~A and ~B) = P(~A) * P(~B | ~A) ~A is given so reduces to P(~B)
   //P(~A and ~B) = P(~A) * P(~B)
-  return (A.getNotProb() + B.getNotProb() - (~A & ~B));
+  return (A.getNotProb() * B.getNotProb());
 }
 
-double operator ^=(const Event & A, const Event & B) {
-  return (A ^ B);
+void operator ^=(Event & A, const Event & B) {
+  A.setProb((A ^ B));
 }
 
 double operator -(const Event & A, const Event & B) {
@@ -87,8 +87,8 @@ double operator -(const Event & A, const Event & B) {
   return (A & ~B);
 }
 
-double operator -=(const Event & A, const Event & B) {
-  return (A - B);
+void operator -=(Event & A, const Event & B) {
+  A.setProb((A - B));
 }
 
 bool operator ==(const Event & A, const Event & B) {
