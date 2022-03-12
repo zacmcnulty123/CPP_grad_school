@@ -2,22 +2,29 @@
 class Event {
   __Public Methods__
   +Event()
-  +Event(double likelihood)
+  +Event(double prob)
   ~Event()
-  +double getLikelihood() const
-  +void setLikelihood()
-  +double getAandBLikelihood(const Event & A, const Event & B) const
-  +double getAorBLikelihood(const Event & A, const Event & B) const
-  +double getANorBLikelihood(const Event & A, const Event & B) const
-  +double getANotBLikelihood(const Event & A, const Event & B) const
+  +double getProb() const
+  +std::string toString() const
+  +void setProb()
   __Private Data Members__
-  double likelihood
-  double notLikelihood
+  double prob
   __Operator Overloads__
-  Event &
-  Event |
-  Event ^
-  Event -
+  double Event &
+  void Event &=
+  double Event |
+  void Event |=
+  double Event ^
+  void Event ^=
+  double Event -
+  void Event -=
+  Event Event ~
+  bool Event ==
+  bool Event <
+  bool Event >
+  bool Event !=
+  bool Event >=
+  bool Event <=
 }
 
 @enduml

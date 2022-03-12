@@ -4,8 +4,10 @@
 using namespace std;
 
 int main(void) {
+  //Vector of random probabilities to work with
   std::vector<Event> A = {0.0, 0.25, 0.5, 0.75, 1.0, 0.3, 0.8, 0.45, 0.16};
   std::vector<Event> B = {0.0, 0.25, 0.5, 0.75, 1.0, 0.6, 0.12, 0.98, 0.33};
+  //Print a table for the basic operator tests
   for (int i = 0; i < A.size(); i++) {
     cout << "Testing Events # " << i << endl;
     cout << "P(A): " << A[i].toString() << endl;
