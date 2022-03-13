@@ -34,8 +34,8 @@ int main(void) {
   }
   cout << temp.toString() << endl;
 
-  Event temp2 = A[5];
-  Event temp3 = B[6];
+  Event temp2 = A[5].getProb();
+  Event temp3 = B[6].getProb();
   cout << "|= Test" << endl;
   cout << "A: " << temp2.toString() << endl;
   cout << "B: " << temp3.toString() << endl;
@@ -45,8 +45,8 @@ int main(void) {
   }
   cout << temp2.toString() << endl;
 
-  Event temp4 = A[6];
-  Event temp5 = B[2];
+  Event temp4 = A[6].getProb();
+  Event temp5 = B[2].getProb();
   cout << "|= Test" << endl;
   cout << "A: " << temp4.toString() << endl;
   cout << "B: " << temp5.toString() << endl;
@@ -56,8 +56,8 @@ int main(void) {
   }
   cout << temp4.toString() << endl;
 
-  Event temp6 = A[7];
-  Event temp7 = B[1];
+  Event temp6 = A[7].getProb();
+  Event temp7 = B[1].getProb();
   cout << "|= Test" << endl;
   cout << "A: " << temp6.toString() << endl;
   cout << "B: " << temp7.toString() << endl;

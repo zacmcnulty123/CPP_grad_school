@@ -21,6 +21,11 @@ public:
     this->prob = prob;
   }
 
+  //Support assignment from double
+  Event operator =(const double rhs) {
+    return (Event(rhs));
+  }
+
   //Destructor
   ~Event() {}
   
