@@ -1,0 +1,20 @@
+@startuml
+
+class tree {
+  __Public Type Definitions__
+  struct node {char data, struct node *left, *right} * nodePtr
+  __Public Methods__
+  
+  template<typename T, typename... Args>
+  Tree Add()
+
+  __operator overload__
+
+
+}
+
+note top of tree
+  tree uses infex expressions
+end note
+
+@enduml
