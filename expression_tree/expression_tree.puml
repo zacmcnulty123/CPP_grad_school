@@ -1,20 +1,87 @@
 @startuml
 
+class Node {
+  __Public Data__
+  NodeBase *left, *right
+  Node Add()
+  Node Sub()
+  Node Mul()
+  Node Div()
+  Node Constant()
+  Node Variable()
+  T getSymbol()
+  
+}
+
+class Add {
+  __Public Data__
+  std::string operator
+  __Public Methods__
+  +Add()
+  ~Add()
+  +double evaluate()
+}
+
+class Sub {
+  __Public Data__
+  std::string operator
+  __Public Metheods__
+  +Sub()
+  ~Sub()
+  +double evaluate()
+}
+
+class Mul {
+  __Public Data__
+  std::string operator
+  __Public Metheods__
+  +Mul()
+  ~Mul()
+  +double evaluate()
+}
+
+class Div {
+  __Public Data__
+  std::string operator
+  __Public Metheods__
+  +Div()
+  ~Div()
+  +double evaluate()
+}
+
+class Constant {
+  __Public Data__
+  double value
+  __Public Metheods__
+  +Constant()
+  ~Constant()
+  +double getValue()
+}
+
+class Variable {
+  __Public Data__
+  std::string Variable
+  __Public Metheods__
+  +Viarable()
+  ~Viarable()
+  +std::string getVariable()
+}
+
 class tree {
+  __Private Data__
+  Node root
   __Public Type Definitions__
   struct node {char data, struct node *left, *right} * nodePtr
-  __Public Methods__
-  
-  template<typename T, typename... Args>
-  Tree Add()
-
-  __operator overload__
-
-
 }
 
 note top of tree
-  tree uses infex expressions
+  tree uses infix expressions
 end note
 
+NodeBase -|> Add : Delegates
+NodeBase -|> Sub : Delegates
+NodeBase -|> Mul : Delegates
+NodeBase -|> Div : Delegates
+NodeBase -|> Constant : Delegates
+NodeBase -|> Variable : Delegates
 @enduml

@@ -7,7 +7,7 @@ class Event {
   +double getProb() const
   +double getProbComp() const
   +std::string toString() const
-  +void setProb()
+  +void setProb(double prob)
   __Private Data Members__
   double prob
   __Operator Overloads__

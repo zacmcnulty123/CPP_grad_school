@@ -1,36 +1,35 @@
 #pragma once
 #include<string>
-#include<map>
 
-//The node can be a variable of a constant
-typedef double constant;
-typedef std::string variable; 
+typedef double consta;
+typedef std::string var;
 typedef std::string op;
 
+// template<typename T>
 class Node {
 private:
-  /* data */
-  std::string symbol;
 public:
-  Node *left;
-  Node *right;
-
-  Node(std::string data) {
-    this->symbol = data;
+  std::string val;
+  Node  *left, *right;
+  Node(std::string rhs) {
+    val = rhs;
     left = NULL;
     right = NULL;
   }
-  ~Node();
 
-  void setLeft(Node *lhsRoot) {
-    left = lhsRoot;
+  Node() {
+    left = NULL;
+    right = NULL;
   }
 
-  void setRight(Node *rhsRoot) {
-    right = rhsRoot;
+  Node operator =(Node rhs) {
+    Node n;
+    n.val = rhs.val;
+    n.left = rhs.left;
+    n.right = rhs.right;
   }
 
-  std::string getSymbol() const {
-    return this->symbol;
+  bool isLeaf(Node* node) {
+    return node->left == nullptr and node->right == nullptr;
   }
 };
