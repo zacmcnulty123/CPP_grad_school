@@ -17,5 +17,6 @@ int main(int argc, char const *argv[])
   Expression* dt = t->derive("x");
   cout << dt->toString() << endl;
   cout << std::to_string(dt->eval(myMap)) << endl;
+  cout << std::to_string(t->eval(myMap)) << endl;
   return 0;
 }

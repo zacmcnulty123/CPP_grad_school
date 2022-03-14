@@ -1,87 +1,125 @@
 @startuml
 
-class Node {
-  __Public Data__
-  NodeBase *left, *right
-  Node Add()
-  Node Sub()
-  Node Mul()
-  Node Div()
-  Node Constant()
-  Node Variable()
-  T getSymbol()
-  
+class Tree {
+  +virtual std::string toString() const = 0
+  +virtual double eval(const std::map<std::string, double> vars) const = 0
+  +virtual Tree* derive(const std::string var) const = 0
+  +Tree()
+  ~Tree()
 }
 
 class Add {
-  __Public Data__
-  std::string operator
-  __Public Methods__
-  +Add()
-  ~Add()
-  +double evaluate()
+  __Private__
+  +const char getOp() const
+  +const Tree* getLeft() const
+  +const Tree* getRight() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string) const
+  const char op
+  const Tree* left
+  const Tree* right
+  +Add(const char oper, const Tree* lhs, const Tree* rhs)
+  +Add(const Tree* root)
+  ~Tree*()
 }
 
 class Sub {
-  __Public Data__
-  std::string operator
-  __Public Metheods__
-  +Sub()
-  ~Sub()
-  +double evaluate()
+  __Private__
+  +const char getOp() const
+  +const Tree* getLeft() const
+  +const Tree* getRight() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string) const
+  const char op
+  const Tree* left
+  const Tree* right
+  +Sub(const char oper, const Tree* lhs, const Tree* rhs)
+  +Sub(const Tree* root)
+  ~Tree*()
 }
 
 class Mul {
-  __Public Data__
-  std::string operator
-  __Public Metheods__
-  +Mul()
-  ~Mul()
-  +double evaluate()
+  __Private__
+  +const char getOp() const
+  +const Tree* getLeft() const
+  +const Tree* getRight() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string) const
+  const char op
+  const Tree* left
+  const Tree* right
+  +Mul(const char oper, const Tree* lhs, const Tree* rhs)
+  +Mul(const Tree* root)
+  ~Tree*()
 }
 
 class Div {
-  __Public Data__
-  std::string operator
-  __Public Metheods__
-  +Div()
-  ~Div()
-  +double evaluate()
+  __Private__
+  +const char getOp() const
+  +const Tree* getLeft() const
+  +const Tree* getRight() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string) const
+  const char op
+  const Tree* left
+  const Tree* right
+  +Div(const char oper, const Tree* lhs, const Tree* rhs)
+  +Div(const Tree* root)
+  ~Tree*()
+}
+
+class Paren {
+  __Private__
+  +const Tree* getInner()
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string var) const
+  const Tree* inner
+  +Paren(const Tree* t)
+  +Paren(const Tree* root)
+  ~Paren()
+}
+
+class Var {
+  __Private__
+  +const std::string getVar() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string var) const
+  const std::string var;
+  +Var(std::string val)
+  +Var(Tree* root)
+  ~Var()
 }
 
 class Constant {
-  __Public Data__
-  double value
-  __Public Metheods__
-  +Constant()
+  __Private__
+  +const double getValue() const
+  __Public__
+  +virtual std::string toString() const
+  +virtual double eval(const std::map<std::string, double> vars) const
+  +virtual Tree* derive(const std::string var) const
+  const double value
+  +Constant(double val)
+  +Constant(Tree* root)
   ~Constant()
-  +double getValue()
 }
 
-class Variable {
-  __Public Data__
-  std::string Variable
-  __Public Metheods__
-  +Viarable()
-  ~Viarable()
-  +std::string getVariable()
-}
-
-class tree {
-  __Private Data__
-  Node root
-  __Public Type Definitions__
-  struct node {char data, struct node *left, *right} * nodePtr
-}
-
-note top of tree
-  tree uses infix expressions
-end note
-
-NodeBase -|> Add : Delegates
-NodeBase -|> Sub : Delegates
-NodeBase -|> Mul : Delegates
-NodeBase -|> Div : Delegates
-NodeBase -|> Constant : Delegates
-NodeBase -|> Variable : Delegates
+Tree -l-|> Add : Derives
+Tree -r-|> Sub : Derives
+Tree -u-|> Mul : Derives
+Tree -d-|> Div : Derives
+Tree -u-|> Paren : Derives
+Tree --|> Var : Derives
+Tree --|> Constant : Derives
 @enduml
