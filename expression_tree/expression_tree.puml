@@ -107,11 +107,11 @@ class Constant {
   ~Constant()
 }
 
-Tree -l-|> Add : Derives
-Tree -r-|> Sub : Derives
-Tree -u-|> Mul : Derives
-Tree -d-|> Div : Derives
-Tree -u-|> Paren : Derives
-Tree --|> Var : Derives
-Tree --|> Constant : Derives
+Tree <|-l- Add : Derived From
+Tree <|-r- Sub : Derived From
+Tree <|-u- Mul : Derived From
+Tree <|-d- Div : Derived From
+Tree <|-u- Paren : Derived From
+Tree <|-- Var : Derived From
+Tree <|-- Constant : Derived From
 @enduml
