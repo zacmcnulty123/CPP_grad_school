@@ -206,12 +206,6 @@ public:
     return ret;
   }
 
-  const Expression* clone(const Expression* root) {
-    if (root == NULL) {return NULL;}
-    const Expression* exp(root);
-    return exp;
-  }
-
   const char op;
   const Expression* left;
   const Expression* right;

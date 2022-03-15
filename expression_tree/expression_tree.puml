@@ -10,69 +10,61 @@ class Tree {
 
 class Add {
   __Private__
-  +const char getOp() const
   +const Tree* getLeft() const
   +const Tree* getRight() const
   __Public__
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
-  const char op
   const Tree* left
   const Tree* right
-  +Add(const char oper, const Tree* lhs, const Tree* rhs)
-  +Add(const Tree* root)
+  +Add(const Tree* lhs, const Tree* rhs)
+  +Add(const Add* root)
   ~Tree*()
 }
 
 class Sub {
   __Private__
-  +const char getOp() const
   +const Tree* getLeft() const
   +const Tree* getRight() const
   __Public__
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
-  const char op
   const Tree* left
   const Tree* right
-  +Sub(const char oper, const Tree* lhs, const Tree* rhs)
-  +Sub(const Tree* root)
+  +Sub(const Tree* lhs, const Tree* rhs)
+  +Sub(const Sub* root)
   ~Tree*()
 }
 
 class Mul {
   __Private__
-  +const char getOp() const
   +const Tree* getLeft() const
   +const Tree* getRight() const
   __Public__
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
-  const char op
   const Tree* left
   const Tree* right
-  +Mul(const char oper, const Tree* lhs, const Tree* rhs)
-  +Mul(const Tree* root)
+  +Mul(const Tree* lhs, const Tree* rhs)
+  +Mul(const Mul* root)
   ~Tree*()
 }
 
 class Div {
   __Private__
-  +const char getOp() const
   +const Tree* getLeft() const
   +const Tree* getRight() const
   __Public__
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
-  const char op
   const Tree* left
   const Tree* right
-  +Div(const char oper, const Tree* lhs, const Tree* rhs)
-  +Div(const Tree* root)
+  +Div(const Tree* lhs, const Tree* rhs)
+  +Div(const Div* root)
   ~Tree*()
 }
 
@@ -85,7 +77,7 @@ class Paren {
   +virtual Tree* derive(const std::string var) const
   const Tree* inner
   +Paren(const Tree* t)
-  +Paren(const Tree* root)
+  +Paren(const Paren* root)
   ~Paren()
 }
 
@@ -98,7 +90,7 @@ class Var {
   +virtual Tree* derive(const std::string var) const
   const std::string var;
   +Var(std::string val)
-  +Var(Tree* root)
+  +Var(const Var* root)
   ~Var()
 }
 
@@ -111,7 +103,7 @@ class Constant {
   +virtual Tree* derive(const std::string var) const
   const double value
   +Constant(double val)
-  +Constant(Tree* root)
+  +Constant(const Constant* root)
   ~Constant()
 }
 
