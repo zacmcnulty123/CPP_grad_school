@@ -1,4 +1,4 @@
-#include "Tree.h"
+#include "TreeBuilder.h"
 #include <iostream>
 #include <iomanip>
 using namespace std;
@@ -20,5 +20,14 @@ int main(int argc, char const *argv[])
   cout << std::setprecision(2) << std::to_string(dt->eval(myMap)) << endl;
   cout << t->toString() << endl;
   cout << std::setprecision(2) << std::to_string(t->eval(myMap)) << endl;
-  return 0;
+
+  std::string tokens = "2.3 * x + ( y * ( z - x ) )";
+  Tree* t2 = TreeBuilder::buildTree(tokens);
+  cout << t2->toString() << endl;
+  cout << std::setprecision(2) << std::to_string(t2->eval(myMap)) << endl;
+  Tree* dt2 = t2->derive("x");
+  cout << dt2->toString() << endl;
+  cout << std::setprecision(2) << std::to_string(dt2->eval(myMap)) << endl;
+
 }
+

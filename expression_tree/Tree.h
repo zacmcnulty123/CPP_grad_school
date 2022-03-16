@@ -1,8 +1,11 @@
 #pragma once
-#include<sstream>
-#include<string>
-#include<map>
-#include<iostream>
+#include <sstream>
+#include <string>
+#include <stack>
+#include <map>
+#include <iostream>
+#include <vector>
+
 class Tree
 {
 private:
@@ -22,6 +25,9 @@ public:
   // with respect to
   //@Return Tree* - Tree structure
   virtual Tree* derive(const std::string var) const = 0;
+
+  virtual int precedence() const = 0;
+
   Tree() {}
   ~Tree(){}
 };
@@ -46,6 +52,10 @@ public:
   virtual Tree* derive(const std::string /*var*/) const {
     //Derived constants are always 0
     return new Constant(0.0);
+  }
+
+  virtual int precedence() const {
+    return 100;
   }
   //Constant's value
   const double value;
@@ -81,6 +91,9 @@ public:
       return new Constant(0.0);
     } 
   }
+  virtual int precedence() const {
+    return 100;
+  }
   //Name of the variables
   const std::string var;
   //Constructor
@@ -113,12 +126,20 @@ public:
     //Derive the inside of the parens
     return inner->derive(var);
   }
+
+  virtual int precedence() const {
+    return 100;
+  }
   //subtree that the parens encapsulate
   const Tree* inner;
   //Constructor
   Paren(const Tree* exp) : inner(exp) {}
   //Copy constructor for cloning
   Paren(const Paren* root) : inner(root->getInner()){}
+
+  static Tree* construct(const Tree* exp) {
+    return exp ? new Paren(exp) : NULL;
+  }
   //Need to handle pointers
   ~Paren() {inner = NULL;}
 };
@@ -158,7 +179,9 @@ public:
     const Tree* expRight(right);
     return new Add(expLeft->derive(var), expRight->derive(var));
   }
-
+  virtual int precedence() const {
+    return 10;
+  }
   //Left subtree
   const Tree* left;
   //Right subtree
@@ -170,6 +193,10 @@ public:
   Add(const Add* root) :
     left(root->getLeft()),
     right(root->getRight()) {}
+
+  static Tree* construct(const Tree* lhs, const Tree* rhs) {
+    return lhs and rhs ? new Add(lhs, rhs) : NULL;
+  }
   ~Add() {left = NULL; right = NULL;}
 };
 
@@ -208,6 +235,9 @@ public:
     const Tree* expRight(right);
     return new Sub(expLeft->derive(var), expRight->derive(var));
   }
+  virtual int precedence() const {
+    return 10;
+  }
 
   const Tree* left;
   const Tree* right;
@@ -218,6 +248,10 @@ public:
   Sub(const Sub* root) :
     left(root->getLeft()),
     right(root->getRight()) {}
+
+  static Tree* construct(const Tree* lhs, const Tree* rhs) {
+    return lhs and rhs ? new Sub(lhs, rhs) : NULL;
+  }
   ~Sub() {left = NULL; right = NULL;}
 };
 
@@ -258,6 +292,10 @@ public:
                   new Mul(expRight, expLeft->derive(var)));
   }
 
+  virtual int precedence() const {
+    return 50;
+  }
+
   const Tree* left;
   const Tree* right;
   Mul(const Tree* lhs, const Tree* rhs) :
@@ -267,6 +305,10 @@ public:
   Mul(const Mul* root) :
     left(root->getLeft()),
     right(root->getRight()) {}
+
+  static Tree* construct(const Tree* lhs, const Tree* rhs) {
+    return lhs and rhs ? new Mul(lhs, rhs) : NULL;
+  }
   ~Mul() {left = NULL; right = NULL;}
 };
 
@@ -315,6 +357,10 @@ public:
                     new Paren(new Mul(expRight, expRight)));
   }
 
+  virtual int precedence() const {
+    return 50;
+  }
+
   const Tree* left;
   const Tree* right;
   Div(const Tree* lhs, const Tree* rhs) :
@@ -325,4 +371,8 @@ public:
     left(root->getLeft()),
     right(root->getRight()) {}
   ~Div() {left = NULL; right = NULL;}
+
+  static Tree* construct(const Tree* lhs, const Tree* rhs) {
+    return lhs and rhs ? new Div(lhs, rhs) : NULL;
+  }
 };
