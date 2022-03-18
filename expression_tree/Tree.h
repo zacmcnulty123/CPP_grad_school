@@ -26,6 +26,8 @@ public:
   //@Return Tree* - Tree structure
   virtual Tree* derive(const std::string var) const = 0;
 
+  //@Brief - returns the precedence of the class
+  // in terms of order of operations
   virtual int precedence() const = 0;
 
   Tree() {}
@@ -55,7 +57,7 @@ public:
   }
 
   virtual int precedence() const {
-    return 100;
+    return 5;
   }
   //Constant's value
   const double value;
@@ -92,7 +94,7 @@ public:
     } 
   }
   virtual int precedence() const {
-    return 100;
+    return 5;
   }
   //Name of the variables
   const std::string var;
@@ -128,7 +130,7 @@ public:
   }
 
   virtual int precedence() const {
-    return 100;
+    return 5;
   }
   //subtree that the parens encapsulate
   const Tree* inner;
@@ -180,7 +182,7 @@ public:
     return new Add(expLeft->derive(var), expRight->derive(var));
   }
   virtual int precedence() const {
-    return 10;
+    return 2;
   }
   //Left subtree
   const Tree* left;
@@ -194,6 +196,9 @@ public:
     left(root->getLeft()),
     right(root->getRight()) {}
 
+  //@Brief static constructor that attempts to create
+  // a valid add tree
+  //@return tree*
   static Tree* construct(const Tree* lhs, const Tree* rhs) {
     return lhs and rhs ? new Add(lhs, rhs) : NULL;
   }
@@ -236,7 +241,7 @@ public:
     return new Sub(expLeft->derive(var), expRight->derive(var));
   }
   virtual int precedence() const {
-    return 10;
+    return 2;
   }
 
   const Tree* left;
@@ -293,7 +298,7 @@ public:
   }
 
   virtual int precedence() const {
-    return 50;
+    return 3;
   }
 
   const Tree* left;
@@ -358,7 +363,7 @@ public:
   }
 
   virtual int precedence() const {
-    return 50;
+    return 3;
   }
 
   const Tree* left;

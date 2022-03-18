@@ -4,6 +4,7 @@ class Tree {
   +virtual std::string toString() const = 0
   +virtual double eval(const std::map<std::string, double> vars) const = 0
   +virtual Tree* derive(const std::string var) const = 0
+  +virtual int precendence() const = 0
   +Tree()
   ~Tree()
 }
@@ -16,10 +17,12 @@ class Add {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
+  +virtual int precedence() const
   const Tree* left
   const Tree* right
   +Add(const Tree* lhs, const Tree* rhs)
   +Add(const Add* root)
+  +static Tree* construct(const Tree* lhs, const Tree* rhs)
   ~Tree*()
 }
 
@@ -31,10 +34,12 @@ class Sub {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
+  +virtual int precedence() const
   const Tree* left
   const Tree* right
   +Sub(const Tree* lhs, const Tree* rhs)
   +Sub(const Sub* root)
+  +static Tree* construct(const Tree* lhs, const Tree* rhs)
   ~Tree*()
 }
 
@@ -46,10 +51,12 @@ class Mul {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
+  +virtual int precedence() const
   const Tree* left
   const Tree* right
   +Mul(const Tree* lhs, const Tree* rhs)
   +Mul(const Mul* root)
+  +static Tree* construct(const Tree* lhs, const Tree* rhs)
   ~Tree*()
 }
 
@@ -61,10 +68,12 @@ class Div {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string) const
+  +virtual int precedence() const
   const Tree* left
   const Tree* right
   +Div(const Tree* lhs, const Tree* rhs)
   +Div(const Div* root)
+  +static Tree* construct(const Tree* lhs, const Tree* rhs)
   ~Tree*()
 }
 
@@ -75,6 +84,7 @@ class Paren {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string var) const
+  +virtual int precedence() const
   const Tree* inner
   +Paren(const Tree* t)
   +Paren(const Paren* root)
@@ -88,6 +98,7 @@ class Var {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string var) const
+  +virtual int precedence() const
   const std::string var;
   +Var(std::string val)
   +Var(const Var* root)
@@ -101,11 +112,25 @@ class Constant {
   +virtual std::string toString() const
   +virtual double eval(const std::map<std::string, double> vars) const
   +virtual Tree* derive(const std::string var) const
+  +virtual int precedence() const
   const double value
   +Constant(double val)
   +Constant(const Constant* root)
   ~Constant()
 }
+
+class TreeBuilder {
+  +std::vector<std::string> tokenize(std::string input)
+  +bool isVar(std::string s)
+  +bool isNum(std::string s)
+  +bool isOperator(std::string s)
+  +Tree* readInfix(std::vector<std::string>::iterator first,std::vector<std::string>::iterator last)
+}
+
+note bottom of TreeBuilder
+  Actually a Namespace that is a helper to build 
+  Expression Trees
+end note
 
 Tree <|-l- Add : Derived From
 Tree <|-r- Sub : Derived From
