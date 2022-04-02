@@ -1,0 +1,52 @@
+@startuml
+class Passenger {
+  __Variables__
+  unsigned int startTime
+  unsigned int startFloor
+  unsigned int endFloor
+  unsigned int endTime
+  __Methods__
+  +Passenger(st, sf, ef)
+  ~Passenger()
+  +unsigned int getStartTime()
+  +unsigned int getStartFloor()
+  +unsigned int getEndFloor()
+  +unsigned int getendTime()
+  +void setEndTime(et)
+  __Operator Overloads__
+  >
+  <
+}
+
+class Floor {
+  unsigned int floorNumber
+  std::queue<Passenger>
+  +Floor(fn)
+  ~Floor()
+  +void queuePassenger(ps)
+  +void dequePassenger()
+}
+
+class Elevator {
+  class State {STOPPED, STOPPING, MOVING_UP, MOVING_DOWN}
+  std::vector<Passenger>
+  unsigned int currFloor
+  State elevatorOp
+  +Elevator()
+  ~Elevator()
+  +unsigned int getCurrFloor()
+  +unsigned int getNumPassengers()
+  +State getElevatorOp
+}
+
+class Simulation {
+  std::array<Floor, 100>
+  unsigned int currTime = 0
+  Statistics stats()
+  std::array<Elevator, 4>
+  +main()
+}
+
+Floor -|> Passenger : Uses
+Elevator -|> Passenger : Uses
+@enduml
