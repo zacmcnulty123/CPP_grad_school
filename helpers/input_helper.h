@@ -49,7 +49,7 @@ namespace input_helper {
     std::ifstream file_to_parse(filename);
     //Don't try to parse an open file
     if (not file_to_parse.is_open()) {
-      throw std::runtime_error("Could not open file");
+      throw std::runtime_error("Could not open file: " + filename);
       return false;
     }
     //Make sure the file is good too parse

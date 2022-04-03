@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 #include <string>
+
+enum class passState {WAITING, NOT_QUEUED, IN_TRANSIT, DONE};
+
 class Passenger
 {
   private:
@@ -8,11 +11,16 @@ class Passenger
     int endTime;
     int startFloor;
     int endFloor;
+    int waitTime;
+    int travelTime;
+    int startTravelTime;
+    passState status;
   public:
     Passenger() {
       startTime = 0;
       startFloor = 0;
       endFloor = 0;
+      status = passState::NOT_QUEUED;
     }
     //@Brief - constructor
     //@Param[in] st - when the passenger arrives at
@@ -25,7 +33,8 @@ class Passenger
       const int & ef) :
         startTime(st),
         startFloor(sf),
-        endFloor(ef) {}
+        endFloor(ef),
+        status(passState::NOT_QUEUED) {}
     //Destructor
     ~Passenger() {}
 
@@ -61,6 +70,27 @@ class Passenger
       this->endFloor = ef;
     }
 
+    void setWaitTime(const int & currTime) {
+      this->waitTime = currTime - this->startTime;
+      this->startTravelTime = currTime;
+    }
+
+    int getWaitTime() const {
+      return this->waitTime;
+    }
+
+    passState getPassState() const {
+      return this->status;
+    }
+
+    void setTravelTime(const int & currTime) {
+      this->travelTime = currTime - this->startTravelTime;
+    }
+
+    int getTravelTime() const {
+      return this->travelTime;
+    }
+
     std::string toString() const {
       std::stringstream ss;
       ss << "Start Time: " << this->getStartTime()
@@ -73,7 +103,7 @@ class Passenger
 
 bool operator >(const Passenger &a, const Passenger &b) {
   return (a.getStartTime() > b.getStartTime());
-} 
+}
 
 bool operator <(const Passenger &a, const Passenger &b) {
   return (a.getStartTime() < b.getStartTime());
