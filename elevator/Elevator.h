@@ -6,26 +6,26 @@ class Elevator
 {
 private:
   /* data */
-  unsigned int elevNum;
-  unsigned int currFloor;
+  int elevNum;
+  int currFloor;
   std::vector<Passenger> passengers;
   elevatorOp elevOp;
 public:
   Elevator(
-    const unsigned int & en,
-    const unsigned int & cf = 0) :
+    const int & en,
+    const int & cf = 0) :
       elevNum(en),
       currFloor(cf),
       passengers(std::vector<Passenger>()),
       elevOp(elevatorOp::STOPPED) {}
   ~Elevator() {}
 
-  unsigned int getCurrFloor() const {
+  int getCurrFloor() const {
     return this->currFloor;
   }
 
-  unsigned int getNumPassengers() const {
-    return static_cast<unsigned int>(this->passengers.size());
+  int getNumPassengers() const {
+    return static_cast<int>(this->passengers.size());
   }
 
   elevatorOp getElevatorState() const {
@@ -36,7 +36,7 @@ public:
     this->elevOp = op;
   }
 
-  unsigned int getElevNum() const  {
+  int getElevNum() const  {
     return this->elevNum;
   }
 };

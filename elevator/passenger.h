@@ -1,58 +1,63 @@
 #pragma once
 #include <iostream>
+#include <string>
 class Passenger
 {
   private:
-    unsigned int startTime;
-    unsigned int endTime;
-    unsigned int startFloor;
-    unsigned int endFloor;
+    int startTime;
+    int endTime;
+    int startFloor;
+    int endFloor;
   public:
-    Passenger() {}
+    Passenger() {
+      startTime = 0;
+      startFloor = 0;
+      endFloor = 0;
+    }
     //@Brief - constructor
     //@Param[in] st - when the passenger arrives at
     // the elevator door for the given floor
     //@Param[in] sf - Floor the passenger is starting at
     //@Param[in] ef - Floor the passenger is ending at
     Passenger(
-      const unsigned int & st,
-      const unsigned int & sf,
-      const unsigned int & ef) :
+      const int & st,
+      const int & sf,
+      const int & ef) :
         startTime(st),
         startFloor(sf),
         endFloor(ef) {}
     //Destructor
     ~Passenger() {}
 
-    unsigned int getStartTime() const {
+    int getStartTime() const {
       return this->startTime;
     }
 
-    unsigned int getStartFloor() const {
+    int getStartFloor() const {
       return this->startFloor;
     }
 
-    unsigned int getEndFloor() const {
+    int getEndFloor() const {
       return this->endFloor;
     }
 
-    unsigned int getEndTime() const {
+    int getEndTime() const {
       return this->endTime;
     }
 
-    void setEndTime(const unsigned int & et) {
+    void setEndTime(const int & et) {
       this->endTime = et;
     }
 
-    void setStartTime(const unsigned int & st) {
+    void setStartTime(const int & st) {
       this->startTime = st;
     }
 
-    void setStartFloor(const unsigned int & sf) {
+    void setStartFloor(const int & sf) {
       this->startFloor = sf;
     }
 
-    void setEndFloor(const unsigned int & ef) {
+    void setEndFloor(const int & ef) {
       this->endFloor = ef;
     }
 
@@ -60,7 +65,8 @@ class Passenger
       std::stringstream ss;
       ss << "Start Time: " << this->getStartTime()
       << " Start Floor: " << this->getStartFloor()
-      << " End Floor: " << this->getEndFloor();
+      << " End Floor: " << this->getEndFloor()
+      << std::endl;
       return ss.str();
     }
 };
@@ -85,15 +91,20 @@ bool operator >=(const Passenger &a, const Passenger &b) {
   return (a.getStartTime() >= b.getStartTime());
 }
 
-std::stringstream & operator >>(std::stringstream & in, Passenger & out) {
-  unsigned int st;
-  unsigned int sf;
-  unsigned int ef;
-  in >> st >> sf >> ef;
-  out.setStartTime(st);
-  out.setStartFloor(sf);
-  out.setEndFloor(ef);
-  return in;
+std::stringstream & operator >>(std::stringstream & ss, Passenger & out) {
+  std::string st, sf, ef;
+  std::getline(ss, st, ',');
+  std::getline(ss, sf, ',');
+  std::getline(ss, ef, ',');
+  //stoi was throwing an invalid argument exception despite
+  //successfully converting the string.
+  try { 
+    out.setStartTime(std::stoi(st));
+    out.setStartFloor(std::stoi(sf));
+    out.setEndFloor(std::stoi(ef));
+  }
+  catch (std::invalid_argument & e) {}
+  return ss;
 }
 
 std::ostream & operator << (std::ostream &out, const Passenger & ps) {

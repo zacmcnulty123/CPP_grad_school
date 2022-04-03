@@ -59,15 +59,22 @@ namespace input_helper {
     std::string line;
     T val;
     //Parse the file
-    while(std::getline(file_to_parse, line)) {
-      std::stringstream ss(line);
-      int col_idx = 0;
-      while (ss >> val) {
-        out.push_back(val);
-        if (ss.peek() == ',')
-          ss.ignore();
-        col_idx++;
+    try {
+      while(std::getline(file_to_parse, line)) {
+        std::stringstream ss(line);
+        int col_idx = 0;
+        while (ss >> val) {
+          out.push_back(val);
+          if (ss.peek() == ',')
+            ss.ignore();
+          col_idx++;
+        }
       }
+    }
+    catch (const Exception & e) {
+      std::stringstream msg;
+      msg << "Error parsing file: " << e.what();
+      throw std::runtime_error(msg.str());
     }
     //Close the file
     file_to_parse.close();
