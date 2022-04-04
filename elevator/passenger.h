@@ -2,105 +2,93 @@
 #include <iostream>
 #include <string>
 
-enum class passState {WAITING, NOT_QUEUED, IN_TRANSIT, DONE};
-
 class Passenger
 {
-  private:
-    int startTime;
-    int endTime;
-    int startFloor;
-    int endFloor;
-    int waitTime;
-    int travelTime;
-    int startTravelTime;
-    passState status;
-  public:
-    Passenger() {
-      startTime = 0;
-      startFloor = 0;
-      endFloor = 0;
-      status = passState::NOT_QUEUED;
-    }
-    //@Brief - constructor
-    //@Param[in] st - when the passenger arrives at
-    // the elevator door for the given floor
-    //@Param[in] sf - Floor the passenger is starting at
-    //@Param[in] ef - Floor the passenger is ending at
-    Passenger(
-      const int & st,
-      const int & sf,
-      const int & ef) :
-        startTime(st),
-        startFloor(sf),
-        endFloor(ef),
-        status(passState::NOT_QUEUED) {}
-    //Destructor
-    ~Passenger() {}
+private:
+  //Start time for the passenger
+  int startTime;
+  //Floor the passenger starts on
+  int startFloor;
+  //Floor the passenger ends on
+  int endFloor;
+  //Time the passenger got on the elevator
+  int startTravelTime;
+public:
+  //constructor
+  Passenger() {
+    startTime = 0;
+    startFloor = 0;
+    endFloor = 0;
+  }
+  //@Brief - constructor
+  //@Param[in] st - when the passenger arrives at
+  // the elevator door for the given floor
+  //@Param[in] sf - Floor the passenger is starting at
+  //@Param[in] ef - Floor the passenger is ending at
+  Passenger(
+    const int & st,
+    const int & sf,
+    const int & ef) :
+      startTime(st),
+      startFloor(sf),
+      endFloor(ef) {}
+  //Destructor
+  ~Passenger() {}
 
-    int getStartTime() const {
-      return this->startTime;
-    }
+  //@Brief - Gets the passengers start time
+  int getStartTime() const {
+    return this->startTime;
+  }
 
-    int getStartFloor() const {
-      return this->startFloor;
-    }
+  //@Brief - Gets the passenger's starting floor
+  int getStartFloor() const {
+    return this->startFloor;
+  }
 
-    int getEndFloor() const {
-      return this->endFloor;
-    }
+  //@Brief - Gets the passenger's end floor
+  int getEndFloor() const {
+    return this->endFloor;
+  }
 
-    int getEndTime() const {
-      return this->endTime;
-    }
+  //@Brief - set start time
+  void setStartTime(const int & st) {
+    this->startTime = st;
+  }
 
-    void setEndTime(const int & et) {
-      this->endTime = et;
-    }
+  //@Brief - sets end time
+  void setStartFloor(const int & sf) {
+    this->startFloor = sf;
+  }
 
-    void setStartTime(const int & st) {
-      this->startTime = st;
-    }
+  //@Brief - sets end floor
+  void setEndFloor(const int & ef) {
+    this->endFloor = ef;
+  }
 
-    void setStartFloor(const int & sf) {
-      this->startFloor = sf;
-    }
+  //@Brief - Sets the passenger's start travel time
+  //@Param[in] currTime - time passenger getting on the elevator
+  void setStartTravelTime(const int & currTime) {
+    this->startTravelTime = currTime;
+  }
 
-    void setEndFloor(const int & ef) {
-      this->endFloor = ef;
-    }
+  //@Brief - Gets the start travel time
+  int getStartTravelTime() const {
+    return this->startTravelTime;
+  }
 
-    void setWaitTime(const int & currTime) {
-      this->waitTime = currTime - this->startTime;
-      this->startTravelTime = currTime;
-    }
-
-    int getWaitTime() const {
-      return this->waitTime;
-    }
-
-    passState getPassState() const {
-      return this->status;
-    }
-
-    void setTravelTime(const int & currTime) {
-      this->travelTime = currTime - this->startTravelTime;
-    }
-
-    int getTravelTime() const {
-      return this->travelTime;
-    }
-
-    std::string toString() const {
-      std::stringstream ss;
-      ss << "Start Time: " << this->getStartTime()
-      << " Start Floor: " << this->getStartFloor()
-      << " End Floor: " << this->getEndFloor()
-      << std::endl;
-      return ss.str();
-    }
+  //@Brief - toString method for passenger class
+  //@return std::string
+  std::string toString() const {
+    std::stringstream ss;
+    ss << "Start Time: " << this->getStartTime()
+    << " Start Floor: " << this->getStartFloor()
+    << " End Floor: " << this->getEndFloor()
+    << std::endl;
+    return ss.str();
+  }
 };
 
+//Operators to help with std::sorting methods
 bool operator >(const Passenger &a, const Passenger &b) {
   return (a.getStartTime() > b.getStartTime());
 }
@@ -121,6 +109,8 @@ bool operator >=(const Passenger &a, const Passenger &b) {
   return (a.getStartTime() >= b.getStartTime());
 }
 
+//StringStream operator overload for loading in csv file contents into the
+//Passenger class object
 std::stringstream & operator >>(std::stringstream & ss, Passenger & out) {
   std::string st, sf, ef;
   std::getline(ss, st, ',');
