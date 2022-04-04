@@ -1,49 +1,94 @@
 @startuml
 class Passenger {
   __Variables__
-  unsigned int startTime
-  unsigned int startFloor
-  unsigned int endFloor
-  unsigned int endTime
+  int startTime
+  int startFloor
+  int endFloor
+  int startTravelTime
   __Methods__
   +Passenger(st, sf, ef)
   ~Passenger()
-  +unsigned int getStartTime()
-  +unsigned int getStartFloor()
-  +unsigned int getEndFloor()
-  +unsigned int getendTime()
-  +void setEndTime(et)
+  +int getStartTime()
+  +int getStartFloor()
+  +int getEndFloor()
+  +void setStartTime(const int st)
+  +void setStartFloor(const int sf)
+  +void setEndFloor(const int ef)
+  +void setStartTravelTime(const in currTime)
+  +int getStartTravelTime()
+  +std::string toString()
   __Operator Overloads__
+  >
+  <
+  '=='
+  <=
+  >=
+  std::stringstream >>
+  std::ostream <<
+}
+
+class Floor {
+  enum class FloorState{SELECT, NOT_SELECTED}
+  __Private__
+  int floorNumber
+  std::deque<Passenger>
+  FloorState State
+  __Public__
+  +Floor(fn)
+  ~Floor()
+  +void queuePassenger(const Passenger ps)
+  +void dequePassenger(const int numToRemove)
+  +std::string toString()
+  +Passenger getFirstPassenger()
+  +int getFloorNumber()
+  +FloorState getFloorState()
+  +int getNumPassenger()
+  +std::deque<Passenger> getPassengers()
+  +void setState(const FloorState fs)
+  __operator Overloads__
+  std::ostream <<
   >
   <
 }
 
-class Floor {
-  unsigned int floorNumber
-  std::queue<Passenger>
-  +Floor(fn)
-  ~Floor()
-  +void queuePassenger(ps)
-  +void dequePassenger()
-}
-
 class Elevator {
-  class State {STOPPED, STOPPING, MOVING_UP, MOVING_DOWN}
-  std::vector<Passenger>
-  unsigned int currFloor
-  State elevatorOp
+  enum class ElevatorOp {STOPPED_NO_PASS,
+    STOPPED_UP, STOPPED_DOWN, STOPPING_UP, STOPPING_DOWN,
+    MOVING_UP, MOVING_DOWN}
+  std::ostream <<
+  __Private__
+  int elevNum
+  int currFloor
+  int nextDestination
+  int timeBtwFloors
+  int timeInState
+  std::vector<Passenger> passengers
+  ElevatorOp elevatorOp
+  int TIME_TO_STOP
+  +void incrementTimeInState()
+  +void resetTimeInState()
+  +int getTimeInState()
+  __Public__
+  const static int MAX_CAPACITY
   +Elevator()
   ~Elevator()
-  +unsigned int getCurrFloor()
-  +unsigned int getNumPassengers()
-  +State getElevatorOp
+  +int getCurrFloor()
+  +int getCurrNumPassengers()
+  +ElevatorOp getElevatorOp()
+  +void setElevatorState(const ElevatorOp op)
+  +int getElevNum()
+  +bool addPassenger(const Passenger ps)
+  +std::deque<Passenger> removePassengers()
+  +void setNextDestination(const int fn)
+  +void determineNextDestination()
+  +bool checkStateTransition()
+  +std::string toString()
+  __Operators__
+  std::ostream <<
 }
 
 class Simulation {
-  std::array<Floor, 100>
-  unsigned int currTime = 0
-  Statistics stats()
-  std::array<Elevator, 4>
+  +runSimulation()
   +main()
 }
 
