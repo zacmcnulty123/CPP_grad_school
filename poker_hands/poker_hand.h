@@ -44,6 +44,8 @@ class PokerHand {
     //              2 - The handToCompare is greater
     int compare(const PokerHand & handToCompare) const;
 
+    void discardCards(const std::vector<Card> & cardsToRemove);
+
     //Destructor
     ~PokerHand();
 
@@ -66,12 +68,13 @@ class PokerHand {
       bool isLowStraight = false;
     }; // NOTE from Zac: Wanted to make this a union type so that values are set
     // based on their handtype but I couldn't figure it out.
-  private:
+
+
     //@Brief - Returns the enumeration value for the type
     // of hand the current hand is.
     //@return HandTypeE
     HandTypeE getHandType() const;
-
+  private:
     //@Brief - Returns the properties of the hand
     //@return Props - Properties of the hand
     Props getProperties() const;
