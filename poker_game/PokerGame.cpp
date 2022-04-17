@@ -145,6 +145,8 @@ int main(int argc, char const *argv[])
   PokerTable table = PokerTable(0);
   table.addPlayer(Player(100, "Player 1", true));
   table.addPlayer(Player(100, "Player 2", true));
+  table.addPlayer(Player(100, "Player 3", true));
+  table.addPlayer(Player(100, "Player 4", true));
 
   while (true) {
     bool gameOver = false;
@@ -169,37 +171,53 @@ int main(int argc, char const *argv[])
               }
             }
             else {
+              // cout << table.getPlayerHand(i);
               table.doComputerPlayerAction(i);
             }
           }
           break;
         }
         case Player::RoundCat::DRAW: {
+          if (table.allPlayersFolded()) {
+            cout << "Everyone Folded" << endl;
+            gameOver = true;
+            break;
+          }
           int size = table.getNumPlayers();
           for (int i = 0; i < size; ++i) {
             if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
               handleDrawPhase(table, i);
             }
-            if (table.isPlayerComputer(i)) {
+            if (not table.isPlayerFolded(i) and table.isPlayerComputer(i)) {
               table.doComputerPlayerAction(i);
             }
           }
           break;
         }
         case Player::RoundCat::BETTING2: {
+          if (table.allPlayersFolded()) {
+            cout << "Everyone Folded" << endl;
+            gameOver = true;
+            break;
+          }
           std::vector<int> players = table.getPlayerOrder();
           for (int i : players) {
             if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
               cout << table.getPlayerHand(i);
               handleOpenTable(table, i);
             }
-            if (table.isPlayerComputer(i)) {
+            if (not table.isPlayerFolded(i) and table.isPlayerComputer(i)) {
               table.doComputerPlayerAction(i);
             }
           }
           break;
         }
         case Player::RoundCat::SHOWDOWN: {
+          if (table.allPlayersFolded()) {
+            cout << "Everyone Folded" << endl;
+            gameOver = true;
+            break;
+          }
           bool tied = false;
           Player winner = table.completeShowdown(tied);
           cout << winner.printHand();
@@ -217,6 +235,9 @@ int main(int argc, char const *argv[])
     cin >> input;
     if (not input.compare("n")) {
       break;
+    }
+    else {
+      table.resetRound();
     }
   }
   return 0;

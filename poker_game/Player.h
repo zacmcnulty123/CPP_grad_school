@@ -25,7 +25,24 @@ public:
     name(name) {}
   ~Player() {}
 
+  Player(const Player & cp) :
+    currMoney(cp.currMoney),
+    currBet(cp.currBet),
+    hand(cp.hand),
+    computer(cp.computer),
+    folded(cp.folded),
+    name(cp.name){}
+
   Player() {}
+
+  void operator=(const Player & cp) {
+    currMoney = cp.currMoney;
+    currBet = cp.currBet;
+    hand = cp.hand;
+    computer = cp.computer;
+    folded = cp.folded;
+    name = cp.name;
+  }
 
   void addCard(const Card & card) {
     try {
@@ -34,6 +51,11 @@ public:
     catch (std::invalid_argument e) {
       throw std::invalid_argument(e.what());
     }
+  }
+
+  void resetHand() {
+    hand = PokerHand();
+    folded = false;
   }
 
   void discardCards(const std::vector<Card> & cards) {
@@ -61,7 +83,7 @@ public:
     double & currTabBet,
     bool & isOpen) {
     int ret = 0;
-    if (not isOpen and getConfidenceInWin() > 10 and currRound == RoundCat::BETTING1) {
+    if (not isOpen and getConfidenceInWin() >= 10 and currRound == RoundCat::BETTING1) {
       currBet = currTabBet;
       isOpen = true;
     }
@@ -70,10 +92,10 @@ public:
       isOpen = true;
     }
     else {
-      if (currRound == RoundCat::BETTING1 and getConfidenceInWin() < 20) {
+      if (currRound == RoundCat::BETTING1 and getConfidenceInWin() <= 10) {
         folded = true;
       } //Fold
-      else if (currRound == RoundCat::BETTING2 and getConfidenceInWin() < 20) {
+      else if (currRound == RoundCat::BETTING2 and getConfidenceInWin() <= 10) {
         folded = true;
       } //Discard
       else if (currRound == RoundCat::DRAW){
@@ -89,6 +111,8 @@ public:
           ret = 2;
         case 20:
           ret = 3;
+        case 12:
+          ret = 4;
         default:
           break;
         }
@@ -124,7 +148,12 @@ public:
       break;
     }
     case HandTypeE::eHighCard: {
-      confidenceInWin = 10;
+      if (hand[4].getValue() >= 8) {
+        confidenceInWin = 12;
+      }
+      else {
+        confidenceInWin = 10;
+      }
       break;
     }
     case HandTypeE::eFlush: {
@@ -148,7 +177,7 @@ public:
       break;
     } 
     case HandTypeE::eFullHouse: {
-      confidenceInWin = 7;
+      confidenceInWin = 70;
       break;
     }
     default:

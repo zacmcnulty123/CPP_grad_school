@@ -1,5 +1,6 @@
 #include "Dealer.h"
 #include "Player.h"
+#include <set>
 class PokerTable
 {
 public:
@@ -86,9 +87,13 @@ public:
     opened = false;
     currRound = Player::RoundCat::INIT;
     playerOrder = std::vector<int>();
+    dealer.makeNewDeck();
     int i = 0;
     for (const Player player: players) {
       playerOrder.push_back(i++);
+    }
+    for (Player & player : players) {
+      player.resetHand();
     }
   }
 
@@ -131,25 +136,30 @@ public:
       and isOpened() == false and temp == true) {
         opened = true;
       }
-    else {
-      PokerHand temp = players[idx].getHand();
-      std::vector<Card> toRemove;
-      std::vector<int> cardsToRemove;
-      std::srand(time(NULL));
-      for (int i = 0; i < numToRemove; ++i) {
-        int j = std::rand() % (i+1);
-        cardsToRemove.push_back(j);
-      }
-      for (const int & i : cardsToRemove) {
-        toRemove.push_back(temp[i]);
-      }
-      players[idx].doAction(
-        Player::PlayerAction::DISCARD,
-        0,
-        toRemove);
-      dealer.addToDiscardPile(toRemove);
-      while (players[idx].getHand().getNumCardsInHand() < 5) {
-        players[idx].addCard(dealer.dealCard());
+    else if (currRound == Player::RoundCat::DRAW) {
+      if (numToRemove > 0) {
+        PokerHand temp = players[idx].getHand();
+        std::vector<Card> toRemove;
+        std::set<int> cardsToRemove;
+        std::srand(time(NULL));
+        int k = 0;
+        while (cardsToRemove.size() < numToRemove) {
+          if (k > cardsToRemove.size()) {k=0;}
+          int j = std::rand() % (k+1);
+          cardsToRemove.insert(j);
+          k++;
+        }
+        for (const int & i : cardsToRemove) {
+          toRemove.push_back(temp[i]);
+        }
+        players[idx].doAction(
+          Player::PlayerAction::DISCARD,
+          0,
+          toRemove);
+        dealer.addToDiscardPile(toRemove);
+        while (players[idx].getHand().getNumCardsInHand() < 5) {
+          players[idx].addCard(dealer.dealCard());
+        }
       }
     }
   }
@@ -232,27 +242,45 @@ public:
   }
 
   Player completeShowdown(bool & tied) {
+    tied = true;
     Player winner;
-    int idx = 0;
+    std::vector<int> idx;
+    int temp = 0;
     for (Player & player : players) {
       if (not player.isFolded()) {
-        winner = player;
+        winner = Player(player);
+        idx.push_back(temp++);
       }
       else {
-        idx++;
+        temp++;
       }
     }
-    for (int i = 1; i < players.size(); ++i) {
-      if (players[i].isFolded()) {continue;}
-      if (winner.getHand() < players[i].getHand()) {
-        winner = players[i];
-        tied = false;
-      }
-      else if (winner.getHand() == players[i].getHand()) {
-        tied = true;
+    if (idx.size() <= 1) {
+
+    }
+    else {
+      for (const int & i : idx) {
+        if (winner.getHand() < players[i].getHand()) {
+          winner = Player(players[i]);
+          tied = false;
+        }
+        else if (winner.getHand() == players[i].getHand()) {
+          tied = true;
+        }
       }
     }
     return winner;
+  }
+
+  bool allPlayersFolded() const {
+    bool ret = true;
+    for (const Player & player : players) {
+      if (not player.isFolded()) {
+        ret = false;
+        break;
+      }
+    }
+    return ret;
   }
 
   bool isPlayerFolded(const int & idx) const {

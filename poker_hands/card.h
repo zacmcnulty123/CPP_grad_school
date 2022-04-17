@@ -45,6 +45,12 @@ class Card {
         throw std::invalid_argument("Arguments given at invalid");
       }
     }
+
+    //copy constructor
+    Card(const Card & cp) :
+      value(cp.value),
+      displayValue(cp.displayValue),
+      suit(cp.suit) {}
     //Destructor
     ~Card() {}
 

@@ -26,6 +26,12 @@ class PokerHand {
     //Constructor
     PokerHand(/* args */);
 
+    PokerHand(
+      const PokerHand & cp) :
+      hand(cp.hand),
+      handType(cp.handType),
+      handProps(cp.handProps) {}
+
     //@Brief - returns the string representations
     // of all the cards in hand ordered High to low
     // @return std::string
@@ -50,14 +56,6 @@ class PokerHand {
       return hand[idx];
     }
 
-    PokerHand& operator =(const PokerHand hand1) {
-      hand = std::vector<Card>();
-      for (const Card & card : hand1.hand) {
-        hand.push_back(card);
-      }
-      return *this;
-    }
-
     //Destructor
     ~PokerHand();
 
@@ -78,6 +76,18 @@ class PokerHand {
       //List of tiebreaker cards that are used when handtypes match
       std::vector<unsigned int> tieBreakers;
       bool isLowStraight = false;
+
+      Props() {}
+
+      Props(
+        const Props & cp) :
+        threeOfKindVal(cp.threeOfKindVal),
+        twoPairVal(cp.twoPairVal),
+        onePairVal(cp.onePairVal),
+        fullHouseVal(cp.fullHouseVal),
+        fourOfAKindVal(cp.fourOfAKindVal),
+        tieBreakers(cp.tieBreakers),
+        isLowStraight(cp.isLowStraight) {}
     }; // NOTE from Zac: Wanted to make this a union type so that values are set
     // based on their handtype but I couldn't figure it out.
 
@@ -211,8 +221,12 @@ std::ostream &operator<<(std::ostream &out, const HandTypeE type) {
       out << "Flush" << std::endl;
       break;
     }
+    case HandTypeE::eNotEnoughCards: {
+      out << "Not Enough Cards" << std::endl;
+      break;
+    }
     default : {
-      out << "Type doesn't exist" << std::endl;
+      out << "PokerHandType doesn't exist" << std::endl;
     }
   }
   return out;

@@ -20,6 +20,7 @@ std::string PokerHand::toString() const {
     ss << separator << hand[i];
     separator = ",";
   }
+  ss << "\nHand Size: " << hand.size(); 
   return ss.str();
 }
 
@@ -49,9 +50,11 @@ void PokerHand::addCard(const Card card) {
 void PokerHand::discardCards(const std::vector<Card> & cardsToRemove) {
   //TODO start from here
   handType = HandTypeE::eNotEnoughCards;
+  handProps = PokerHand::Props();
   for (Card card : cardsToRemove) {
     hand.erase(std::remove_if(hand.begin(), hand.end(),
-      [card](Card card1) {return card1 == card;}));
+      [card](Card card1) {return (card1 == card) 
+        and not card1.getSuit().compare(card.getSuit());}));
   }
 }
 
@@ -209,7 +212,7 @@ int PokerHand::compare(const PokerHand & handToCompare) const {
   if (handType == HandTypeE::eNotEnoughCards
     or handToCompare.getHandType() == HandTypeE::eNotEnoughCards) {
       throw std::invalid_argument("Ones of the hands do not"
-        "have enough cards to compare");
+        " have enough cards to compare");
   }
   //NOTE from Zac: Wasn't sure if a hand with enough cards to compare
   //Would be inherently greater than one without enough cards.
