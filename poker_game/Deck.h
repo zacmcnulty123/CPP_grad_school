@@ -8,13 +8,14 @@ private:
   /* data */
   std::vector<Card> deck;
 
+public:
+
   template<typename T>
-  void swap (T *a, T *b) {
+  static void swap (T *a, T *b) {
     T temp = *a;
     *a = *b;
     *b = temp;
   }
-public:
   
   Deck() {
     int idx = 0;

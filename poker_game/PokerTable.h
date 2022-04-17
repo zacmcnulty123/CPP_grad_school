@@ -3,51 +3,51 @@
 class PokerTable
 {
 public:
-  enum class SeatCat {DEALER, PLAYER};
 
-  enum class RoundCat {INIT=0, BETTING1, DRAW, BETTING2, SHOWDOWN};
   const static int MAX_CAPACITY = 7;
   PokerTable(
     const double currAnte) :
       players(std::vector<Player>()),
       currAnte(currAnte),
-      currRound(RoundCat::INIT),
+      currRound(Player::RoundCat::INIT),
       openerPos(0),
       opened(false),
-      blindPos(0),
-      currBet(0) {
+      playerNum(0),
+      playerOrder(std::vector<int>()) {
         dealer = Dealer();
+        minAnte = currAnte;
       }
   ~PokerTable() {}
 
   void advanceRound() {
     switch (currRound)
     {
-      case RoundCat::INIT: {
-        currRound = RoundCat::BETTING1;
+      case Player::RoundCat::INIT: {
+        currRound = Player::RoundCat::BETTING1;
         break;
       }
-      case RoundCat::BETTING1: {
-        currRound = RoundCat::DRAW;
+      case Player::RoundCat::BETTING1: {
+        currRound = Player::RoundCat::DRAW;
         break;
       }
-      case RoundCat::DRAW: {
-        currRound = RoundCat::BETTING2;
+      case Player::RoundCat::DRAW: {
+        currRound = Player::RoundCat::BETTING2;
+        opened = false;
         break;
       }
-      case RoundCat::BETTING2: {
-        currRound = RoundCat::SHOWDOWN;
+      case Player::RoundCat::BETTING2: {
+        currRound = Player::RoundCat::SHOWDOWN;
         break;
       }
-      case RoundCat::SHOWDOWN: {
-        currRound = RoundCat::INIT;
+      case Player::RoundCat::SHOWDOWN: {
+        currRound = Player::RoundCat::INIT;
       }
       default:
         break;
     }
   }
 
-  RoundCat getCurrRound() const {
+  Player::RoundCat getCurrRound() const {
     return currRound;
   }
 
@@ -57,7 +57,11 @@ public:
 
   void openTable(const int & openedIdx) {
     opened = true;
-    openerPos = openedIdx;
+    Deck::swap(&playerOrder[0], &playerOrder[openedIdx]);
+  }
+
+  std::vector<int> getPlayerOrder() const {
+    return playerOrder;
   }
 
   void addPlayer(const Player & player) {
@@ -66,6 +70,7 @@ public:
     }
     else {
       players.push_back(player);
+      playerOrder.push_back(playerNum++);
     }
   }
 
@@ -78,7 +83,13 @@ public:
   }
 
   void resetRound() {
-    currRound = RoundCat::INIT;
+    opened = false;
+    currRound = Player::RoundCat::INIT;
+    playerOrder = std::vector<int>();
+    int i = 0;
+    for (const Player player: players) {
+      playerOrder.push_back(i++);
+    }
   }
 
   std::string showPlayerHands() const {
@@ -112,6 +123,37 @@ public:
     return players[idx].isComputer();
   }
 
+  void doComputerPlayerAction(const int & idx) {
+    bool temp = isOpened();
+    int numToRemove = players[idx].doComputerAction(currRound, currAnte, temp);
+    if ((currRound == Player::RoundCat::BETTING1 
+      or currRound == Player::RoundCat::BETTING2)
+      and isOpened() == false and temp == true) {
+        opened = true;
+      }
+    else {
+      PokerHand temp = players[idx].getHand();
+      std::vector<Card> toRemove;
+      std::vector<int> cardsToRemove;
+      std::srand(time(NULL));
+      for (int i = 0; i < numToRemove; ++i) {
+        int j = std::rand() % (i+1);
+        cardsToRemove.push_back(j);
+      }
+      for (const int & i : cardsToRemove) {
+        toRemove.push_back(temp[i]);
+      }
+      players[idx].doAction(
+        Player::PlayerAction::DISCARD,
+        0,
+        toRemove);
+      dealer.addToDiscardPile(toRemove);
+      while (players[idx].getHand().getNumCardsInHand() < 5) {
+        players[idx].addCard(dealer.dealCard());
+      }
+    }
+  }
+
   bool isOpened() const {
     return opened;
   }
@@ -129,22 +171,22 @@ public:
       //TODO: Probably want to handle Ante's here too
       if (static_cast<Player::PlayerAction>(actionIdx)
           == Player::PlayerAction::RAISE) {
-        if (bet < currBet) {
+        if (bet < currAnte) {
           throw std::invalid_argument("Cannot place a "
-            "bet lower than the table's highest bet:" +std::to_string(currBet));
+            "bet lower than the table's highest bet:" +std::to_string(currAnte));
         }
       }
       if (not opened) {
-        currBet = bet;
+        currAnte = bet;
       }
-      else if (currBet < bet) {
-        currBet = bet;
+      else if (currAnte < bet) {
+        currAnte = bet;
       }
       if (static_cast<Player::PlayerAction>(actionIdx) ==
           Player::PlayerAction::CALL) {
           players[idx].doAction(
             static_cast<Player::PlayerAction>(actionIdx),
-            currBet);
+            currAnte);
       }
       if (static_cast<Player::PlayerAction>(actionIdx) ==
           Player::PlayerAction::DISCARD) {
@@ -189,6 +231,30 @@ public:
     return players[idx].getCurrBet();
   }
 
+  Player completeShowdown(bool & tied) {
+    Player winner;
+    int idx = 0;
+    for (Player & player : players) {
+      if (not player.isFolded()) {
+        winner = player;
+      }
+      else {
+        idx++;
+      }
+    }
+    for (int i = 1; i < players.size(); ++i) {
+      if (players[i].isFolded()) {continue;}
+      if (winner.getHand() < players[i].getHand()) {
+        winner = players[i];
+        tied = false;
+      }
+      else if (winner.getHand() == players[i].getHand()) {
+        tied = true;
+      }
+    }
+    return winner;
+  }
+
   bool isPlayerFolded(const int & idx) const {
     if (idx > players.size()) {
       throw std::invalid_argument("Index given outside of range! " 
@@ -198,12 +264,13 @@ public:
   }
 private:
   std::vector<Player> players;
-  double currAnte;
-  RoundCat currRound;
+  Player::RoundCat currRound;
   int openerPos;
   bool opened;
-  int blindPos;
-  double currBet;
+  int playerNum;
+  double currAnte;
+  double minAnte;
+  std::vector<int> playerOrder;
   Dealer dealer;
 
   void validatePlayerIndex(const int & idx) const {

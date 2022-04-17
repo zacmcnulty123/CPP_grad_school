@@ -50,11 +50,12 @@ class PokerHand {
       return hand[idx];
     }
 
-    bool operator =(const PokerHand hand1) {
+    PokerHand& operator =(const PokerHand hand1) {
       hand = std::vector<Card>();
-      for (Card & card : hand1.hand) {
+      for (const Card & card : hand1.hand) {
         hand.push_back(card);
       }
+      return *this;
     }
 
     //Destructor
@@ -155,7 +156,7 @@ class PokerHand {
 //Prints the contents of the hand in a human readable manner
 std::ostream &operator<<(std::ostream &out, const PokerHand hand) {
   out << hand.toString();
-  return out;
+  return out; 
 }
 
 //Set of operators for handling == < and > for pokerhands

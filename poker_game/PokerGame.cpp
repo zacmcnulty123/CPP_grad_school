@@ -6,6 +6,7 @@ void handleOpenTable(PokerTable & table, const int & i) {
   bool validInput = false;
   while (not validInput) {
     cout << "You currently have: " << table.getPlayerMoney(i)
+    << "\n The Table's current Bet is: " << table.getAnte()
     << "\nYour current bet is: " << table.getPlayerBet(i) << endl;
     cout << "Would you like to \n" <<
     "Enter 3 to Raise \n" <<
@@ -30,6 +31,7 @@ void handleOpenTable(PokerTable & table, const int & i) {
         }
         else if (std::stod(input) == 5) {
           table.commitPlayerAction(i, 5);
+          validInput = true;
         }
       } catch (std::invalid_argument e) {
         cerr << "Caught Exception: " << e.what() << endl;
@@ -47,6 +49,7 @@ void handleNotOpenTable(PokerTable & table, const int i) {
   bool validInput = false;
   while (not validInput) {
     cout << "You currently have: " << table.getPlayerMoney(i)
+    << "\n The Table's current Bet is: " << table.getAnte()
     << "\nYour current bet is: " << table.getPlayerBet(i) << endl;
     cout << "Would you like to \n" <<
     "Enter 1 to Check \n" <<
@@ -140,53 +143,81 @@ void handleDrawPhase(PokerTable & table, const int & idx) {
 int main(int argc, char const *argv[])
 {
   PokerTable table = PokerTable(0);
-  table.addPlayer(Player(100, "Player 1"));
-  table.addPlayer(Player(100, "Player 2"));
+  table.addPlayer(Player(100, "Player 1", true));
+  table.addPlayer(Player(100, "Player 2", true));
 
-  bool gameOver = false;
-
-  while (not gameOver) {
-    //Round init, deal the cards
-    switch (table.getCurrRound())
-    {
-      case PokerTable::RoundCat::INIT: {
-        table.dealHands();
-        break;
-      }
-      case PokerTable::RoundCat::BETTING1: {
-        int size = table.getNumPlayers();
-        for (int i = 0; i < size; ++i) {
-          if (not table.isPlayerComputer(i)) {
-            cout << table.getPlayerHand(i);
-            if (not table.isOpened()) {
-              handleNotOpenTable(table, i);
+  while (true) {
+    bool gameOver = false;
+    while (not gameOver) {
+      //Round init, deal the cards
+      switch (table.getCurrRound())
+      {
+        case Player::RoundCat::INIT: {
+          table.dealHands();
+          break;
+        }
+        case Player::RoundCat::BETTING1: {
+          int size = table.getNumPlayers();
+          for (int i = 0; i < size; ++i) {
+            if (not table.isPlayerComputer(i)) {
+              cout << table.getPlayerHand(i);
+              if (not table.isOpened()) {
+                handleNotOpenTable(table, i);
+              }
+              else {
+                handleOpenTable(table, i);
+              }
             }
             else {
-              handleOpenTable(table, i);
+              table.doComputerPlayerAction(i);
             }
           }
+          break;
         }
-        break;
-      }
-      case PokerTable::RoundCat::DRAW: {
-        int size = table.getNumPlayers();
-        for (int i = 0; i < size; ++i) {
-          handleDrawPhase(table, i);
+        case Player::RoundCat::DRAW: {
+          int size = table.getNumPlayers();
+          for (int i = 0; i < size; ++i) {
+            if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
+              handleDrawPhase(table, i);
+            }
+            if (table.isPlayerComputer(i)) {
+              table.doComputerPlayerAction(i);
+            }
+          }
+          break;
         }
-        gameOver = true;
-        break;
+        case Player::RoundCat::BETTING2: {
+          std::vector<int> players = table.getPlayerOrder();
+          for (int i : players) {
+            if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
+              cout << table.getPlayerHand(i);
+              handleOpenTable(table, i);
+            }
+            if (table.isPlayerComputer(i)) {
+              table.doComputerPlayerAction(i);
+            }
+          }
+          break;
+        }
+        case Player::RoundCat::SHOWDOWN: {
+          bool tied = false;
+          Player winner = table.completeShowdown(tied);
+          cout << winner.printHand();
+          gameOver = true;
+          break;
+        }
+        default: {
+          cerr << "Round Category unknown!" << endl;
+        }
       }
-      case PokerTable::RoundCat::BETTING2: {
-        break;
-      }
-      case PokerTable::RoundCat::SHOWDOWN: {
-        break;
-      }
-      default: {
-        cerr << "Round Category unknown!" << endl;
-      }
+      table.advanceRound();
     }
-    table.advanceRound();
+    cout << "Would everyone like to go another round? y or n?" << endl;
+    std::string input;
+    cin >> input;
+    if (not input.compare("n")) {
+      break;
+    }
   }
   return 0;
 }

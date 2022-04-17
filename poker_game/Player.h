@@ -9,10 +9,10 @@ private:
   double currBet;
   PokerHand hand;
   bool computer;
-  int confidenceInWin;
   bool folded;
   std::string name;
 public:
+  enum class RoundCat {INIT=0, BETTING1=1, DRAW=2, BETTING2=3, SHOWDOWN=4};
   enum class PlayerAction {CHECK=1, BET=2, RAISE=3, FOLD=4, CALL=5, DISCARD=6};
   Player(const double money,
     const std::string name,
@@ -21,7 +21,6 @@ public:
     currBet(0),
     hand(PokerHand()),
     computer(isComputer),
-    confidenceInWin(0),
     folded(false),
     name(name) {}
   ~Player() {}
@@ -57,15 +56,71 @@ public:
     return computer;
   }
 
-  void getConfidenceInWin() {
+  int doComputerAction(
+    const Player::RoundCat & currRound,
+    double & currTabBet,
+    bool & isOpen) {
+    int ret = 0;
+    if (not isOpen and getConfidenceInWin() > 10 and currRound == RoundCat::BETTING1) {
+      currBet = currTabBet;
+      isOpen = true;
+    }
+    else if (not isOpen and getConfidenceInWin() > 30 and currRound == RoundCat::BETTING2) {
+      currBet = currTabBet;
+      isOpen = true;
+    }
+    else {
+      if (currRound == RoundCat::BETTING1 and getConfidenceInWin() < 20) {
+        folded = true;
+      } //Fold
+      else if (currRound == RoundCat::BETTING2 and getConfidenceInWin() < 20) {
+        folded = true;
+      } //Discard
+      else if (currRound == RoundCat::DRAW){
+        switch (getConfidenceInWin())
+        {
+        case 90:
+        case 80:
+        case 60:
+        case 50:
+        case 40:
+          break;
+        case 30:
+          ret = 2;
+        case 20:
+          ret = 3;
+        default:
+          break;
+        }
+      } //Raise
+      else if ((currRound == RoundCat::BETTING1 or 
+        currRound == RoundCat::BETTING2) and getConfidenceInWin() > 50) {
+        if (currTabBet < currMoney - 10) {
+          currBet = currTabBet + 5;
+          currTabBet = currBet;
+        }
+      } //Call
+      else if ((currRound == RoundCat::BETTING1 or 
+        currRound == RoundCat::BETTING2) and getConfidenceInWin() < 50) {
+        if (currTabBet < currMoney - 10) {
+          currBet = currTabBet;
+          currTabBet = currBet;
+        }
+      }
+    }
+    return ret;
+  }
+
+  int getConfidenceInWin() {
+    int confidenceInWin = 0;
     switch (hand.getHandType())
     {
     case HandTypeE::eStraight: {
-      confidenceInWin = 80;
+      confidenceInWin = 50;
       break;
     }
     case HandTypeE::eStraightFlush: {
-      confidenceInWin = 100;
+      confidenceInWin = 90;
       break;
     }
     case HandTypeE::eHighCard: {
@@ -73,15 +128,15 @@ public:
       break;
     }
     case HandTypeE::eFlush: {
-      confidenceInWin = 50;
+      confidenceInWin = 60;
       break;
     }
     case HandTypeE::eFourOfAKind: {
-      confidenceInWin = 70;
+      confidenceInWin = 80;
       break;
     }
     case HandTypeE::eThreeOfAKind: {
-      confidenceInWin = 50;
+      confidenceInWin = 40;
       break;
     }
     case HandTypeE::eTwoPair: {
@@ -93,12 +148,13 @@ public:
       break;
     } 
     case HandTypeE::eFullHouse: {
-      confidenceInWin = 60;
+      confidenceInWin = 7;
       break;
     }
     default:
       break;
     }
+    return confidenceInWin;
   }
 
   void doAction(
@@ -119,6 +175,7 @@ public:
         folded = true;
         break;
       }
+      case PlayerAction::CALL:
       case PlayerAction::RAISE:
       case PlayerAction::BET: {
         currBet = bet;
@@ -128,7 +185,6 @@ public:
         //do nothing
         break;
       }
-
       case PlayerAction::DISCARD: {
         discardCards(cardToRemove);
         break;

@@ -11,6 +11,7 @@ PokerHand::~PokerHand() {}
 
 std::string PokerHand::toString() const {
   std::stringstream ss;
+  ss << handType;
   const char* separator = "";
   //Hand is sorted each time a card is added.
   //It is easier to read L -> R when ordered
@@ -46,9 +47,11 @@ void PokerHand::addCard(const Card card) {
 }
 
 void PokerHand::discardCards(const std::vector<Card> & cardsToRemove) {
+  //TODO start from here
   handType = HandTypeE::eNotEnoughCards;
   for (Card card : cardsToRemove) {
-    hand = std::remove(hand.begin(), hand.end(), card);
+    hand.erase(std::remove_if(hand.begin(), hand.end(),
+      [card](Card card1) {return card1 == card;}));
   }
 }
 
