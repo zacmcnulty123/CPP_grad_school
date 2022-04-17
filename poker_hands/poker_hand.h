@@ -46,6 +46,17 @@ class PokerHand {
 
     void discardCards(const std::vector<Card> & cardsToRemove);
 
+    Card operator[](std::size_t idx) {
+      return hand[idx];
+    }
+
+    bool operator =(const PokerHand hand1) {
+      hand = std::vector<Card>();
+      for (Card & card : hand1.hand) {
+        hand.push_back(card);
+      }
+    }
+
     //Destructor
     ~PokerHand();
 
@@ -74,6 +85,8 @@ class PokerHand {
     // of hand the current hand is.
     //@return HandTypeE
     HandTypeE getHandType() const;
+
+    int getNumCardsInHand() const;
   private:
     //@Brief - Returns the properties of the hand
     //@return Props - Properties of the hand

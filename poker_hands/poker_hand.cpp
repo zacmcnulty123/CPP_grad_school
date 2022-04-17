@@ -48,7 +48,7 @@ void PokerHand::addCard(const Card card) {
 void PokerHand::discardCards(const std::vector<Card> & cardsToRemove) {
   handType = HandTypeE::eNotEnoughCards;
   for (Card card : cardsToRemove) {
-    std::remove(hand.begin(), hand.end(), card);
+    hand = std::remove(hand.begin(), hand.end(), card);
   }
 }
 
@@ -58,6 +58,10 @@ HandTypeE PokerHand::getHandType() const {
 
 PokerHand::Props PokerHand::getProperties() const {
   return handProps;
+}
+
+int PokerHand::getNumCardsInHand() const {
+  return hand.size();
 }
 
 int PokerHand::handleTieBreakers(const std::vector<unsigned int> tieBreakers) const {

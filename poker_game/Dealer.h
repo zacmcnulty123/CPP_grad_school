@@ -6,12 +6,16 @@ class Dealer
 private:
   /* data */
   Deck deck =  Deck();
+  std::vector<Card> discardedCards = std::vector<Card>();
 public:
-  Dealer() {}
+  Dealer() {
+    deck.shuffle();
+  }
   ~Dealer() {}
 
   void makeNewDeck () {
     deck = Deck();
+    deck.shuffle();
   }
 
   Card dealCard() {
@@ -21,5 +25,11 @@ public:
 
   void Shuffle() {
     deck.shuffle();
+  }
+
+  void addToDiscardPile(const std::vector<Card> & discarded) {
+    for (const Card & card : discarded) {
+      discardedCards.push_back(card);
+    }
   }
 };

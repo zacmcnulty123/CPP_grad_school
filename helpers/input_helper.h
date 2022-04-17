@@ -71,7 +71,7 @@ namespace input_helper {
         }
       }
     }
-    catch (const Exception & e) {
+    catch (const std::exception & e) {
       std::stringstream msg;
       msg << "Error parsing file: " << e.what();
       throw std::runtime_error(msg.str());

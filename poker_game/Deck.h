@@ -42,6 +42,10 @@ public:
     return ret;
   }
 
+  void addCard(const Card & card) {
+    deck.push_back(card);
+  }
+
   std::string toString() {
     std::stringstream ss;
 
