@@ -5,7 +5,7 @@ class Dealer
 {
 private:
   /* data */
-  Deck deck =  Deck();
+  Deck deck = Deck();
   std::vector<Card> discardedCards = std::vector<Card>();
 public:
   Dealer() {
@@ -20,6 +20,12 @@ public:
 
   Card dealCard() {
     Card ret = deck.draw();
+    if (deck.getNumCardsLeftInDeck() == 0) {
+      for (const Card & card : discardedCards) {
+        deck.addCard(card);
+      }
+      deck.shuffle();
+    }
     return ret;
   }
 

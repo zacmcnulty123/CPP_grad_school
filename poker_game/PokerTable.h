@@ -58,19 +58,22 @@ public:
 
   void openTable(const int & openedIdx) {
     opened = true;
-    Deck::swap(&playerOrder[0], &playerOrder[openedIdx]);
+    if (currRound == Player::RoundCat::BETTING1) {
+      Deck::swap(&playerOrder[0], &playerOrder[openedIdx]);
+    }
   }
 
   std::vector<int> getPlayerOrder() const {
     return playerOrder;
   }
 
-  void addPlayer(const Player & player) {
+  void addPlayer(const double money, const std::string name,
+    bool isComputer=false) {
     if (players.size() >= MAX_CAPACITY+1) {
       throw std::invalid_argument("Table is full");
     }
     else {
-      players.push_back(player);
+      players.push_back(Player(money, name, getAnte(), isComputer));
       playerOrder.push_back(playerNum++);
     }
   }
@@ -248,7 +251,7 @@ public:
     int temp = 0;
     for (Player & player : players) {
       if (not player.isFolded()) {
-        winner = Player(player);
+        winner = player;
         idx.push_back(temp++);
       }
       else {
@@ -256,12 +259,13 @@ public:
       }
     }
     if (idx.size() <= 1) {
-
+      //Do nothing
     }
     else {
       for (const int & i : idx) {
         if (winner.getHand() < players[i].getHand()) {
-          winner = Player(players[i]);
+          winner = players[i];
+          temp = i;
           tied = false;
         }
         else if (winner.getHand() == players[i].getHand()) {
@@ -269,6 +273,7 @@ public:
         }
       }
     }
+    players[temp].setAsWinner();
     return winner;
   }
 
@@ -289,6 +294,39 @@ public:
         + std::to_string(players.size()));
     }
     return players[idx].isFolded();
+  }
+
+  void adjustPlayerMoney() {
+    double winnings = 0;
+    for (Player & player : players) {
+      if (player.isFolded() or not player.isWinner()) {
+        winnings += player.getCurrBet();
+        player.adjustMoney();
+      }
+    }
+    for (Player & player : players) {
+      if (player.isWinner()) {
+        player.adjustMoney(winnings);
+        break;
+      }
+    }
+    std::vector<Player>::iterator it = players.begin();
+    for (Player & player : players) {
+      if (player.getMoney() < minAnte) {
+        players.erase(it);
+      }
+      else {
+        it++;
+      }
+    }
+  }
+
+  std::string getPlayerinfo(const int & idx) const {
+    if (idx > players.size()) {
+      throw std::invalid_argument("Index given outside of range! " 
+        + std::to_string(players.size()));
+    }
+    return players[idx].toString();
   }
 private:
   std::vector<Player> players;

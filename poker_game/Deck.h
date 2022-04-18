@@ -29,10 +29,8 @@ public:
 
   void shuffle() {
     std::srand(time(NULL));
-
     for (int i = deck.size() - 1; i > 0; i--) {
       int j =  std::rand() % (i + 1);
-
       swap(&deck[i], &deck[j]);
     }
   }
@@ -45,6 +43,10 @@ public:
 
   void addCard(const Card & card) {
     deck.push_back(card);
+  }
+
+  int getNumCardsLeftInDeck() const {
+    return deck.size();
   }
 
   std::string toString() {

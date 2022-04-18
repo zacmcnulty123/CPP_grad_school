@@ -32,6 +32,12 @@ class PokerHand {
       handType(cp.handType),
       handProps(cp.handProps) {}
 
+    void operator =(const PokerHand & cp) {
+      hand = cp.hand;
+      handType = cp.handType;
+      handProps = cp.handProps;
+    }
+
     //@Brief - returns the string representations
     // of all the cards in hand ordered High to low
     // @return std::string
@@ -88,6 +94,15 @@ class PokerHand {
         fourOfAKindVal(cp.fourOfAKindVal),
         tieBreakers(cp.tieBreakers),
         isLowStraight(cp.isLowStraight) {}
+      void operator=(const Props & cp) {
+        threeOfKindVal = cp.threeOfKindVal;
+        twoPairVal = cp.twoPairVal;
+        onePairVal = cp.onePairVal;
+        fullHouseVal = cp.fullHouseVal;
+        fourOfAKindVal = cp.fourOfAKindVal;
+        tieBreakers = cp.tieBreakers;
+        isLowStraight = cp.isLowStraight;
+      }
     }; // NOTE from Zac: Wanted to make this a union type so that values are set
     // based on their handtype but I couldn't figure it out.
 

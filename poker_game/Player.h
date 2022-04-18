@@ -11,18 +11,21 @@ private:
   bool computer;
   bool folded;
   std::string name;
+  bool winner;
 public:
   enum class RoundCat {INIT=0, BETTING1=1, DRAW=2, BETTING2=3, SHOWDOWN=4};
   enum class PlayerAction {CHECK=1, BET=2, RAISE=3, FOLD=4, CALL=5, DISCARD=6};
   Player(const double money,
     const std::string name,
+    const int currBet=0,
     const bool isComputer=false) :
     currMoney(money),
-    currBet(0),
+    currBet(currBet),
     hand(PokerHand()),
     computer(isComputer),
     folded(false),
-    name(name) {}
+    name(name),
+    winner(false) {}
   ~Player() {}
 
   Player(const Player & cp) :
@@ -31,7 +34,8 @@ public:
     hand(cp.hand),
     computer(cp.computer),
     folded(cp.folded),
-    name(cp.name){}
+    name(cp.name),
+    winner(cp.winner){}
 
   Player() {}
 
@@ -42,6 +46,16 @@ public:
     computer = cp.computer;
     folded = cp.folded;
     name = cp.name;
+    winner = cp.winner;
+  }
+
+  void adjustMoney(double winnings=0) {
+    if (winnings > 0) {
+      currMoney += winnings;
+    }
+    else {
+      currMoney -= currBet;
+    }
   }
 
   void addCard(const Card & card) {
@@ -53,9 +67,26 @@ public:
     }
   }
 
+  std::string toString() const {
+    std::stringstream ss;
+    ss << name << std::endl;
+    ss << "Money Available: " << currMoney << std::endl;
+    ss << "Current Bet: " << currBet << std::endl;
+    return ss.str();
+  }
+
   void resetHand() {
     hand = PokerHand();
     folded = false;
+    winner = false;
+  }
+
+  bool isWinner() const {
+    return winner;
+  }
+
+  void setAsWinner() {
+    winner = true;
   }
 
   void discardCards(const std::vector<Card> & cards) {
@@ -68,6 +99,10 @@ public:
 
   double getMoney() const {
     return currMoney;
+  }
+
+  std::string getName() const {
+    return name;
   }
 
   bool isFolded() const {
@@ -87,7 +122,7 @@ public:
       currBet = currTabBet;
       isOpen = true;
     }
-    else if (not isOpen and getConfidenceInWin() > 30 and currRound == RoundCat::BETTING2) {
+    else if (not isOpen and getConfidenceInWin() >= 10 and currRound == RoundCat::BETTING2) {
       currBet = currTabBet;
       isOpen = true;
     }

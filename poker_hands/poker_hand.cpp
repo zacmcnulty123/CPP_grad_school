@@ -20,7 +20,6 @@ std::string PokerHand::toString() const {
     ss << separator << hand[i];
     separator = ",";
   }
-  ss << "\nHand Size: " << hand.size(); 
   return ss.str();
 }
 

@@ -46,13 +46,19 @@ class Card {
       }
     }
 
-    //copy constructor
+    // //copy constructor
     Card(const Card & cp) :
       value(cp.value),
       displayValue(cp.displayValue),
       suit(cp.suit) {}
     //Destructor
     ~Card() {}
+
+    void operator=(const Card & cp) {
+      value = cp.value;
+      displayValue = cp.displayValue;
+      suit = cp.suit;
+    }
 
     //@Brief - Gets the Value of the Card
     //@Return unsigned int - Raw value of the card

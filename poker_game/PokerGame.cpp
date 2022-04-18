@@ -142,11 +142,14 @@ void handleDrawPhase(PokerTable & table, const int & idx) {
 
 int main(int argc, char const *argv[])
 {
-  PokerTable table = PokerTable(0);
-  table.addPlayer(Player(100, "Player 1", true));
-  table.addPlayer(Player(100, "Player 2", true));
-  table.addPlayer(Player(100, "Player 3", true));
-  table.addPlayer(Player(100, "Player 4", true));
+  PokerTable table = PokerTable(10);
+  table.addPlayer(100, "Player 1", true);
+  table.addPlayer(100, "Player 2", true);
+  table.addPlayer(100, "Player 3", true);
+  table.addPlayer(100, "Player 4", true);
+  table.addPlayer(100, "Player 5", true);
+  table.addPlayer(100, "Player 6", true);
+  table.addPlayer(100, "Player 7", true);
 
   while (true) {
     bool gameOver = false;
@@ -156,22 +159,36 @@ int main(int argc, char const *argv[])
       {
         case Player::RoundCat::INIT: {
           table.dealHands();
+          int size = table.getNumPlayers();
+          for (int i = 0; i < size; ++i) {
+            cout << table.getPlayerinfo(i);
+          }
           break;
         }
         case Player::RoundCat::BETTING1: {
           int size = table.getNumPlayers();
-          for (int i = 0; i < size; ++i) {
-            if (not table.isPlayerComputer(i)) {
-              cout << table.getPlayerHand(i);
-              if (not table.isOpened()) {
-                handleNotOpenTable(table, i);
+          int openIdx = 0;
+          while (not table.isOpened()) {
+            for (int i = 0; i < size; ++i) {
+              if (not table.isPlayerComputer(i)) {
+                cout << table.getPlayerHand(i);
+                if (not table.isOpened()) {
+                  handleNotOpenTable(table, i);
+                }
               }
               else {
-                handleOpenTable(table, i);
+                table.doComputerPlayerAction(i);
               }
+              if (table.isOpened()) { openIdx = i; }
+            }
+          }
+          for (int i = 0; i < size; ++i) {
+            if (i == openIdx) {continue;}
+            if (not table.isPlayerComputer(i)) {
+              cout << table.getPlayerHand(i);
+              handleOpenTable(table, i);
             }
             else {
-              // cout << table.getPlayerHand(i);
               table.doComputerPlayerAction(i);
             }
           }
@@ -200,8 +217,23 @@ int main(int argc, char const *argv[])
             gameOver = true;
             break;
           }
+          int openIdx = 0;
+          while (not table.isOpened()) {
+            std::vector<int> players = table.getPlayerOrder();
+            for (int i : players) {
+              if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
+                cout << table.getPlayerHand(i);
+                handleNotOpenTable(table, i);
+              }
+              if (not table.isPlayerFolded(i) and table.isPlayerComputer(i)) {
+                table.doComputerPlayerAction(i);
+              }
+              if (table.isOpened()) {openIdx = i;}
+            }
+          }
           std::vector<int> players = table.getPlayerOrder();
           for (int i : players) {
+            if (openIdx == i) {continue;}
             if (not table.isPlayerFolded(i) and not table.isPlayerComputer(i)) {
               cout << table.getPlayerHand(i);
               handleOpenTable(table, i);
@@ -220,8 +252,10 @@ int main(int argc, char const *argv[])
           }
           bool tied = false;
           Player winner = table.completeShowdown(tied);
-          cout << winner.printHand();
+          cout << "\nWinner! " << winner.printHand() << endl;
+          cout << "All Hands this round: \n" << table.showPlayerHands();
           gameOver = true;
+          table.adjustPlayerMoney();
           break;
         }
         default: {
@@ -238,6 +272,8 @@ int main(int argc, char const *argv[])
     }
     else {
       table.resetRound();
+      cout << "Some Players may have been removed for not being able to make the "
+        "minimum ante" << endl;
     }
   }
   return 0;
