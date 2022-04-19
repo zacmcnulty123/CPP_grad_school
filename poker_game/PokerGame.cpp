@@ -1,7 +1,9 @@
 #include "PokerTable.h"
 #include "../helpers/input_helper.h"
 using namespace std;
-
+//@Brief - does the prompting availble for an open table
+//@Param[inout] table - poker table
+//@Param[in] i - player index
 void handleOpenTable(PokerTable & table, const int & i) {
   bool validInput = false;
   while (not validInput) {
@@ -44,7 +46,9 @@ void handleOpenTable(PokerTable & table, const int & i) {
     }
   }
 }
-
+//@Brief - Handles the options for an unopened table
+//@Param[inout] table - poker table
+//@Param[in] i - seat of the current player
 void handleNotOpenTable(PokerTable & table, const int i) {
   bool validInput = false;
   while (not validInput) {
@@ -54,7 +58,6 @@ void handleNotOpenTable(PokerTable & table, const int i) {
     cout << "Would you like to \n" <<
     "Enter 1 to Check \n" <<
     "Enter 2 to Bet \n";
-
     std::string input;
     cin >> input;
     if (input_helper::is_number(input)) {
@@ -82,7 +85,9 @@ void handleNotOpenTable(PokerTable & table, const int i) {
     }
   }
 }
-
+//@Brief - handles the draw phase of a poker game
+//@Param[inout] table - poker table
+//@Param[in] idx - seat of the active player
 void handleDrawPhase(PokerTable & table, const int & idx) {
   cout << table.getPlayerHand(idx);
   const char* separator = "";
@@ -139,7 +144,6 @@ void handleDrawPhase(PokerTable & table, const int & idx) {
     }
   }
 }
-
 int main(int argc, char const *argv[])
 {
   PokerTable table = PokerTable(10);
@@ -154,9 +158,9 @@ int main(int argc, char const *argv[])
   while (true) {
     bool gameOver = false;
     while (not gameOver) {
-      //Round init, deal the cards
       switch (table.getCurrRound())
       {
+        //Round init, deal the cards
         case Player::RoundCat::INIT: {
           table.dealHands();
           int size = table.getNumPlayers();
@@ -165,6 +169,7 @@ int main(int argc, char const *argv[])
           }
           break;
         }
+        //Open with first player. Handled unopened and opened table
         case Player::RoundCat::BETTING1: {
           int size = table.getNumPlayers();
           int openIdx = 0;

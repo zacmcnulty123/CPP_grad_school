@@ -5,18 +5,19 @@
 class Deck
 {
 private:
-  /* data */
+  //Vector to wrap
   std::vector<Card> deck;
-
 public:
-
+  //@Brief swap two elements
+  //@Param[in] *a - pointer to the left element
+  //@Param[in] *b - pointer to the right element
   template<typename T>
   static void swap (T *a, T *b) {
     T temp = *a;
     *a = *b;
     *b = temp;
   }
-  
+  //Constructor that makes a standard 52 card deck
   Deck() {
     int idx = 0;
     for (std::string suit : SUITS) {
@@ -25,8 +26,9 @@ public:
       }
     }
   }
+  //Destructor
   ~Deck() {};
-
+  //@Brief - Shuffles the deck
   void shuffle() {
     std::srand(time(NULL));
     for (int i = deck.size() - 1; i > 0; i--) {
@@ -34,33 +36,21 @@ public:
       swap(&deck[i], &deck[j]);
     }
   }
-
+  //@Brief - Draws a card off the that "stack"
+  //@return - Card
   Card draw() {
     Card ret = deck.back();
     deck.pop_back();
     return ret;
   }
-
+  //@Brief - puts a card on the back
+  //@Param[in] card - card to add to the deck
   void addCard(const Card & card) {
     deck.push_back(card);
   }
-
+  //@Brief - returns the number of cards in the deck
+  //@Return inr
   int getNumCardsLeftInDeck() const {
     return deck.size();
   }
-
-  std::string toString() {
-    std::stringstream ss;
-
-    ss << "Deck\n";
-    for (Card card : deck) {
-      ss << card << std::endl;
-    }
-    return ss.str();
-  }
 };
-
-std::ostream &operator << (std::ostream &out, Deck deck) {
-  out << deck.toString();
-  return out;
-}
