@@ -1,7 +1,7 @@
 @startuml
 
 package "PokerTable" {
-  class PoketTable {
+  class PokerTable {
     __Private__
     std::vector<Player> players
     Player::RoundCat currRound
@@ -131,7 +131,7 @@ package "PokerTable" {
     }
     }
   }
-  Dealer -d-> PoketTable
-  
+  Dealer -u-> PokerTable
+  Player -u-> PokerTable
 }
 @enduml
