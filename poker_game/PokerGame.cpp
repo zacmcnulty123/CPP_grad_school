@@ -144,16 +144,84 @@ void handleDrawPhase(PokerTable & table, const int & idx) {
     }
   }
 }
+PokerTable setupTable() {
+  string ante;
+  PokerTable table;
+  while (true) {
+    cout << "What is the Ante for the Table? Cannot be 0" << endl;
+    cin >> ante;
+    if (not input_helper::is_pos_number(ante)) {
+      cout << "Please enter a positive number" << endl;
+    }
+    try {
+      table.setTableAnte(stod(ante));
+      break;
+    } catch (out_of_range) {
+      cerr << "Value out of range of given datatype" << endl;
+    }
+  }
+  double totPlayers;
+  while(true) {
+    string numPlayers;
+    cout << "How many players are in the game? Must be between 2 and 7" << endl;
+    cin >> numPlayers;
+    try {
+      if (not input_helper::is_pos_number(numPlayers)) {
+        cout << "Please enter a positive number" << endl;
+      }
+      else if (stod(numPlayers) < 2 or stod(numPlayers) > 7) {
+        cout << "Please enter a number between 2 and 7" << endl;
+      }
+      else {
+        totPlayers = stod(numPlayers);
+        break;
+      }
+    } catch (out_of_range) {
+      cerr << "Value out of range of given datatype" << endl;
+    }
+  }
+  int i =0;
+  while(i < totPlayers) {
+    cout << "How much money does player" << (i+1) 
+    << " have? Must be at least: " << ante << endl;
+    string money;
+    string computer;
+    try {
+      cin >> money;
+      if (not input_helper::is_pos_number(money)) {
+        cout << "Please enter a positive number" << endl;
+      }
+      else if (stod(money) < stod(ante)) {
+        cout << "Please enter a value equal to or greater than the ante" 
+        << endl;
+      }
+      else {
+        cout << "Is Player" << (i+1) << " a computer? y or n" << endl;
+        cin >> computer;
+        if (not computer.compare("y")) {
+          table.addPlayer(stod(money), "Player"+to_string(++i) true);
+        }
+        else {
+          table.addPlayer(stod(money), "Player"+to_string(++i), false);
+        }
+      }
+    } catch (out_of_range) {
+      cerr << "Value out of range of given datatype" << endl;
+    }
+  }
+  return table;
+}
 int main(int argc, char const *argv[])
 {
-  PokerTable table = PokerTable(10);
-  table.addPlayer(100, "Player 1", true);
-  table.addPlayer(100, "Player 2", true);
-  table.addPlayer(100, "Player 3", true);
-  table.addPlayer(100, "Player 4", true);
-  table.addPlayer(100, "Player 5", true);
-  table.addPlayer(100, "Player 6", true);
-  table.addPlayer(100, "Player 7", true);
+  PokerTable table = setupTable();
+  // PokerTable table = PokerTable(10);
+  // table.addPlayer(100, "Player 1", true);
+  // table.addPlayer(100, "Player 2", true);
+  // table.addPlayer(100, "Player 3", true);
+  // table.addPlayer(100, "Player 4", true);
+  // table.addPlayer(100, "Player 5", true);
+  // table.addPlayer(100, "Player 6", true);
+  // table.addPlayer(100, "Player 7", true);
 
   while (true) {
     bool gameOver = false;
@@ -279,6 +347,9 @@ int main(int argc, char const *argv[])
       table.resetRound();
       cout << "Some Players may have been removed for not being able to make the "
         "minimum ante" << endl;
+      if (table.getNumPlayers() < 2) {
+        cout << "Not Enough Players left to play!" << endl;
+      }
     }
   }
   return 0;

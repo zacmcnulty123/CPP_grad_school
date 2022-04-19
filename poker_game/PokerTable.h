@@ -19,8 +19,23 @@ public:
         dealer = Dealer();
         minAnte = currAnte;
       }
+  PokerTable() : 
+      players(std::vector<Player>()),
+      currAnte(0),
+      currRound(Player::RoundCat::INIT),
+      openerPos(0),
+      opened(false),
+      playerNum(0),
+      playerOrder(std::vector<int>()) {
+        dealer = Dealer();
+      }
   //Destructor
   ~PokerTable() {}
+  //@Brief - Sets the ante of the table
+  //@Param[in] ante - value to set
+  void setTableAnte(const double & ante) {
+    currAnte = ante;
+  }
   //Advances the phase of the game
   void advanceRound() {
     switch (currRound)
