@@ -1,0 +1,137 @@
+@startuml
+
+package "PokerTable" {
+  class PoketTable {
+    __Private__
+    std::vector<Player> players
+    Player::RoundCat currRound
+    int openerPos
+    bool opened
+    int playerNum
+    double currAnte
+    double minAnte
+    std::vector<int> playerOrder
+    Dealer deal
+    __Public__
+    const static int MAX_CAPAVITY
+    +PokerTable(const double ante)
+    +PokerTable()
+    ~PoketTable()
+    +void setTableAnte(const double ante)
+    +void advanceRound()
+    +Player::RoundCat  getCurrRound() const
+    +double getAnte() const
+    +void openTable(const int openerIdx)
+    +std::vector<int> getPlayerOrder() const
+    +void addPlayer(const double money, const std::string name)
+    +void dealHands()
+    +void resetRound()
+    +std::string showPlayerHands() const
+    +int getNumPlayers() const
+    +std::string getPlayerHand(const int idx) const
+    +bool isPlayerComputer(const int idx) const
+    +void doComputerPlayerAction(const int idx)
+    +bool isOpened() const
+    +void commitPlayerAction(int idx, int actionIdx, double bet, vector<Card>)
+    +double getPlayerMoney(const int idx)
+    +double getPlayerBet(const int idx)
+    +Player completeShowdown(bool & tied)
+    +bool allPlayersFolded() const
+    +bool isPlayerFolded(const int idx)
+    +void adjustPlayerMoney()
+    std::string getPlayerInf(const int idx) const
+  }
+
+
+  package "Player" {
+    class Player {
+      __Private__
+      double currMoney
+      double currBet
+      PokerHand hand
+      bool computer
+      bool folded
+      std::string name
+      bool winner
+      __Public__
+      enum class RoundCat
+      enum class PlayerAction
+      +Player(const double money, const std::string name, int bet, bool comp)
+      ~Player()
+      +Player(const Player & cp)
+      +Player()
+      +void adjustMoney(double winnings)
+      +void addCard(const Card & card)
+      +std::string toString() const
+      +bool isWinner() const
+      +void setAsWinner()
+      +void discardCards(const std::vector<Card> & cards)
+      +double getMoney() const
+      +std::string getName() const
+      +bool isFolded() const
+      +bool isComputer() const
+      +int doComputerAction(const RoundCat & rd, double bet, bool open)
+      +int getConfidenceInWin()
+      +void doAction(const Player Action, const double bet, vector<Card>)
+      +PokerHand getHand() const
+      +std::string printHand() const
+      __Operators__
+      =
+    }
+    class RoundCat {
+      INIT
+      BETTING1
+      DRAW
+      BETTING2
+      SHOWDOWN
+    }
+    RoundCat -|> Player
+
+    class PlayerAction {
+      CHECK
+      BET
+      RAISE
+      FOLD
+      CALL
+      DISCARD
+    }
+    PlayerAction -|> Player
+    package "Poker_Hand" {
+      class PokerHand {
+
+      }
+    }
+    Poker_Hand -|> Player : Used By
+  }
+  package "Dealer" {
+    class Dealer {
+      __Private__
+      Deck deck
+      std::vector<Card> discardedCards
+      __Public__
+      +Dealer()
+      ~Dealer()
+      +void makeNewDeck()
+      +Card dealCard()
+      +void shuffle()
+      +void addToDiscardPile
+    }
+    package "Deck" {
+      class Deck {
+      __Private__
+      std::vector<Card> deck
+      __public__
+      +static void swap(T *a, T *b)
+      +Deck()
+      ~Deck()
+      +void shuffle()
+      +Card draw()
+      +void addCard(const Card & Card)
+      +int getNumCardsLeftInDeck() const
+    }
+    }
+  }
+  Dealer -d-> PoketTable
+  
+}
+@enduml
