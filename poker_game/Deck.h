@@ -18,24 +18,11 @@ public:
     *b = temp;
   }
   //Constructor that makes a standard 52 card deck
-  Deck() {
-    int idx = 0;
-    for (std::string suit : SUITS) {
-      for (auto [key, value] : CARD_TO_VALUE_MAP) {
-        deck.push_back(Card(key, suit));
-      }
-    }
-  }
+  Deck();
   //Destructor
-  ~Deck() {};
+  ~Deck();
   //@Brief - Shuffles the deck
-  void shuffle() {
-    std::srand(time(NULL));
-    for (int i = deck.size() - 1; i > 0; i--) {
-      int j =  std::rand() % (i + 1);
-      swap(&deck[i], &deck[j]);
-    }
-  }
+  void shuffle();
   //@Brief - Draws a card off the that "stack"
   //@return - Card
   Card draw() {
@@ -45,12 +32,8 @@ public:
   }
   //@Brief - puts a card on the back
   //@Param[in] card - card to add to the deck
-  void addCard(const Card & card) {
-    deck.push_back(card);
-  }
+  void addCard(const Card & card);
   //@Brief - returns the number of cards in the deck
   //@Return inr
-  int getNumCardsLeftInDeck() const {
-    return deck.size();
-  }
+  int getNumCardsLeftInDeck() const;
 };

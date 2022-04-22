@@ -26,27 +26,11 @@ public:
   Player(const double money,
     const std::string name,
     const int currBet=0,
-    const bool isComputer=false) :
-    currMoney(money),
-    currBet(currBet),
-    hand(PokerHand()),
-    computer(isComputer),
-    folded(false),
-    name(name),
-    winner(false) {}
+    const bool isComputer=false);
   //Destructor
-  ~Player() {}
+  ~Player();
   //Copy Constructor
-  Player(const Player & cp) :
-    currMoney(cp.currMoney),
-    currBet(cp.currBet),
-    hand(cp.hand),
-    computer(cp.computer),
-    folded(cp.folded),
-    name(cp.name),
-    winner(cp.winner){}
-  //Default constructor
-  Player() {}
+  Player(const Player & cp);
   //assignment operator overload
   void operator=(const Player & cp) {
     currMoney = cp.currMoney;
@@ -59,77 +43,37 @@ public:
   }
   //@Brief - adjusts the money of the player
   //@Param[in] winnings - amount of money won that player
-  void adjustMoney(double winnings=0) {
-    if (winnings > 0) {
-      currMoney += winnings;
-    }
-    else {
-      currMoney -= currBet;
-    }
-  }
+  void adjustMoney(double winnings=0);
   //@Brief - adds card to player's hand
   //@Param[in] card - card to add
-  void addCard(const Card & card) {
-    try {
-      hand.addCard(card);
-    }
-    catch (std::invalid_argument e) {
-      throw std::invalid_argument(e.what());
-    }
-  }
+  void addCard(const Card & card);
   //@Brief - to string method for the player
   //@return std::string
-  std::string toString() const {
-    std::stringstream ss;
-    ss << name << std::endl;
-    ss << "Money Available: " << currMoney << std::endl;
-    ss << "Current Bet: " << currBet << std::endl;
-    return ss.str();
-  }
+  std::string toString() const;
   //@Brief - resets the player's hand and status
   // for in between rounds
-  void resetHand() {
-    hand = PokerHand();
-    folded = false;
-    winner = false;
-  }
+  void resetHand();
   //@Brief - returns if the player is the winner of the round
   //@return - bool
-  bool isWinner() const {
-    return winner;
-  }
+  bool isWinner() const;
   //@Brief - sets the player as the winner of the current round
-  void setAsWinner() {
-    winner = true;
-  }
+  void setAsWinner();
   //@Brief - Discards cards from the player's hand
   //@Param[in] - list of cards to discard
-  void discardCards(const std::vector<Card> & cards) {
-    hand.discardCards(cards);
-  }
+  void discardCards(const std::vector<Card> & cards);
   //@Brief - gets the player's current bet
   //@return double
-  double getCurrBet() const {
-    return currBet;
-  }
+  double getCurrBet() const;
   //@Brief - gets the money available to the player
   //@return double
-  double getMoney() const {
-    return currMoney;
-  }
+  double getMoney() const;
   //@Brief - Gets the name of the player
   //@return std::string
-  std::string getName() const {
-    return name;
-  }
+  std::string getName() const;
   //@Brief - getter for folded
-  bool isFolded() const {
-    return folded;
-  }
+  bool isFolded() const;
   //@Brief - getter for computer
-  bool isComputer() const {
-    return computer;
-  }
+  bool isComputer() const;
   //@Brief - Dumb AI implementation that allows the player to play the game
   //@Param[in] - Current round of the game
   //@Param[in] currTabBet - Current bet of the table
@@ -138,114 +82,10 @@ public:
   int doComputerAction(
     const Player::RoundCat & currRound,
     double & currTabBet,
-    bool & isOpen) {
-    int ret = 0;
-    if (not isOpen and getConfidenceInWin() >= 10
-      and currRound == RoundCat::BETTING1) {
-      currBet = currTabBet;
-      isOpen = true;
-    }
-    else if (not isOpen and getConfidenceInWin() >= 10
-      and currRound == RoundCat::BETTING2) {
-      currBet = currTabBet;
-      isOpen = true;
-    }
-    else {
-      if (currRound == RoundCat::BETTING1 and getConfidenceInWin() <= 10) {
-        folded = true;
-      } //Fold
-      else if (currRound == RoundCat::BETTING2
-        and getConfidenceInWin() <= 10) {
-        folded = true;
-      } //Discard
-      else if (currRound == RoundCat::DRAW){
-        switch (getConfidenceInWin())
-        {
-        case 90:
-        case 80:
-        case 60:
-        case 50:
-        case 40:
-          break;
-        case 30:
-          ret = 2;
-        case 20:
-          ret = 3;
-        case 12:
-          ret = 4;
-        default:
-          break;
-        }
-      } //Raise
-      else if ((currRound == RoundCat::BETTING1 or 
-        currRound == RoundCat::BETTING2) and getConfidenceInWin() > 50) {
-        if (currTabBet < currMoney - 10) {
-          currBet = currTabBet + 5;
-          currTabBet = currBet;
-        }
-      } //Call
-      else if ((currRound == RoundCat::BETTING1 or 
-        currRound == RoundCat::BETTING2) and getConfidenceInWin() < 50) {
-        if (currTabBet < currMoney - 10) {
-          currBet = currTabBet;
-          currTabBet = currBet;
-        }
-      }
-    }
-    return ret;
-  }
+    bool & isOpen);
   //@Brief - Used for the AI to gauge confidence
   //@return int
-  int getConfidenceInWin() {
-    int confidenceInWin = 0;
-    switch (hand.getHandType())
-    {
-    case HandTypeE::eStraight: {
-      confidenceInWin = 50;
-      break;
-    }
-    case HandTypeE::eStraightFlush: {
-      confidenceInWin = 90;
-      break;
-    }
-    case HandTypeE::eHighCard: {
-      if (hand[4].getValue() >= 8) {
-        confidenceInWin = 12;
-      }
-      else {
-        confidenceInWin = 10;
-      }
-      break;
-    }
-    case HandTypeE::eFlush: {
-      confidenceInWin = 60;
-      break;
-    }
-    case HandTypeE::eFourOfAKind: {
-      confidenceInWin = 80;
-      break;
-    }
-    case HandTypeE::eThreeOfAKind: {
-      confidenceInWin = 40;
-      break;
-    }
-    case HandTypeE::eTwoPair: {
-      confidenceInWin = 30;
-      break;
-    }
-    case HandTypeE::eOnePair: {
-      confidenceInWin = 20;
-      break;
-    } 
-    case HandTypeE::eFullHouse: {
-      confidenceInWin = 70;
-      break;
-    }
-    default:
-      break;
-    }
-    return confidenceInWin;
-  }
+  int getConfidenceInWin();
   //@Brief - Handles actions that can be done by the player
   //@Param[in] action - Action the player chose
   //@Param[in] bet - Bet amount chosen by the player
@@ -253,49 +93,9 @@ public:
   void doAction(
     const PlayerAction & action,
     const double & bet=0,
-    const std::vector<Card> & cardToRemove=std::vector<Card>()) {
-    if (bet > currMoney) {
-      throw std::invalid_argument("Bet cannot be higher than the "
-        "total money you have: " + std::to_string(currMoney));
-    }
-    else if (bet < currBet and bet != 0) {
-      throw std::invalid_argument("Bet cannot be lower"
-        "than current bet of: " + std::to_string(currBet));
-    }
-    switch (action)
-    {
-      case PlayerAction::FOLD: {
-        folded = true;
-        break;
-      }
-      case PlayerAction::CALL:
-      case PlayerAction::RAISE:
-      case PlayerAction::BET: {
-        currBet = bet;
-        break;
-      }
-      case PlayerAction::CHECK: {
-        //do nothing
-        break;
-      }
-      case PlayerAction::DISCARD: {
-        discardCards(cardToRemove);
-        break;
-      }
-      default: {
-        throw std::invalid_argument("PlayerAction Unknown!");
-      }
-    }
-  }
+    const std::vector<Card> & cardToRemove=std::vector<Card>());
   //@Brief - Getter for the player's hand
-  PokerHand getHand() const {
-    return hand;
-  }
+  PokerHand getHand() const;
   //@Brief - ToString method for the player's hand
-  std::string printHand() const {
-    std::stringstream ss;
-    ss << name << std::endl;
-    ss << hand << std::endl;
-    return ss.str();
-  }
+  std::string printHand() const;
 };

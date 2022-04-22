@@ -1,4 +1,4 @@
-#include "PokerTable.h"
+#include "PokerTable.cpp"
 #include "../helpers/input_helper.h"
 using namespace std;
 //@Brief - does the prompting availble for an open table
@@ -148,7 +148,7 @@ PokerTable setupTable() {
   string ante;
   PokerTable table;
   while (true) {
-    cout << "What is the Ante for the Table? Cannot be 0" << endl;
+    cout << "What is the Ante for the Table? Cannot less than 0" << endl;
     cin >> ante;
     if (not input_helper::is_pos_number(ante)) {
       cout << "Please enter a positive number" << endl;
@@ -199,7 +199,7 @@ PokerTable setupTable() {
         cout << "Is Player" << (i+1) << " a computer? y or n" << endl;
         cin >> computer;
         if (not computer.compare("y")) {
-          table.addPlayer(stod(money), "Player"+to_string(++i) true);
+          table.addPlayer(stod(money), "Player"+to_string(++i),true);
         }
         else {
           table.addPlayer(stod(money), "Player"+to_string(++i), false);
@@ -214,15 +214,6 @@ PokerTable setupTable() {
 int main(int argc, char const *argv[])
 {
   PokerTable table = setupTable();
-  // PokerTable table = PokerTable(10);
-  // table.addPlayer(100, "Player 1", true);
-  // table.addPlayer(100, "Player 2", true);
-  // table.addPlayer(100, "Player 3", true);
-  // table.addPlayer(100, "Player 4", true);
-  // table.addPlayer(100, "Player 5", true);
-  // table.addPlayer(100, "Player 6", true);
-  // table.addPlayer(100, "Player 7", true);
-
   while (true) {
     bool gameOver = false;
     while (not gameOver) {
@@ -233,7 +224,7 @@ int main(int argc, char const *argv[])
           table.dealHands();
           int size = table.getNumPlayers();
           for (int i = 0; i < size; ++i) {
-            cout << table.getPlayerinfo(i);
+            cout << table.getPlayerInfo(i);
           }
           break;
         }
@@ -324,8 +315,16 @@ int main(int argc, char const *argv[])
             break;
           }
           bool tied = false;
-          Player winner = table.completeShowdown(tied);
-          cout << "\nWinner! " << winner.printHand() << endl;
+          std::vector<Player> winner = table.completeShowdown(tied);
+          if (not tied) {
+            cout << "\nWinner! " << winner[0].printHand() << endl;
+          }
+          else {
+            cout << There was a tie! << endl;
+            for (const Player & player : winner) {
+              cout << "\nWinner! " << winner[0].printHand() << endl;
+            }
+          }
           cout << "All Hands this round: \n" << table.showPlayerHands();
           gameOver = true;
           table.adjustPlayerMoney();
