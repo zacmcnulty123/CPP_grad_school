@@ -46,6 +46,7 @@ void Player::resetHand() {
   hand = PokerHand();
   folded = false;
   winner = false;
+  currBet = 0;
 }
 bool Player::isWinner() const {
   return winner;

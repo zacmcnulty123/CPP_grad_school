@@ -87,6 +87,7 @@ void straightFlushTest(const std::string fs) {
   assert(pokerHands[0] > pokerHands[1]);
   assert(pokerHands[2] > pokerHands[3]);
   assert(pokerHands[4] == pokerHands[5]);
+  assert(pokerHands[6] > pokerHands[7]);
   std::cout << verboseTestHandCompare(pokerHands);
 }
 

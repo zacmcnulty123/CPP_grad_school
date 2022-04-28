@@ -88,6 +88,8 @@ void PokerTable::resetRound() {
   currRound = Player::RoundCat::INIT;
   playerOrder = std::vector<int>();
   dealer.makeNewDeck();
+  multiWin = 1;
+  currAnte = minAnte;
   int i = 0;
   for (const Player player: players) {
     playerOrder.push_back(i++);
@@ -263,6 +265,7 @@ std::vector<Player> PokerTable::completeShowdown(bool & tied) {
   if (tied) {
     for (Player & player : ties) {
       player.setAsWinner();
+      multiWin += 1;
     }
   }
   else {
@@ -298,7 +301,9 @@ void PokerTable::adjustPlayerMoney() {
   }
   for (Player & player : players) {
     if (player.isWinner()) {
-      player.adjustMoney(winnings);
+      //Split the pot according to the number of
+      //Players tied
+      player.adjustMoney(winnings/multiWin);
       break;
     }
   }

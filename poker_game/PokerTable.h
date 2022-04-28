@@ -76,7 +76,7 @@ public:
   //@Brief - Does the showdown phase of the game
   //@Param[in] whether there is a tie
   //@return Player
-  Player completeShowdown(bool & tied);
+  std::vector<Player> completeShowdown(bool & tied);
   //@Brief - determines if all player's folded
   //@return bool
   bool allPlayersFolded() const;
@@ -97,6 +97,7 @@ private:
   int playerNum;
   double currAnte;
   double minAnte;
+  int multiWin = 1;
   std::vector<int> playerOrder;
   Dealer dealer;
 };

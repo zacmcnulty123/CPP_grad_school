@@ -243,7 +243,10 @@ int main(int argc, char const *argv[])
               else {
                 table.doComputerPlayerAction(i);
               }
-              if (table.isOpened()) { openIdx = i; }
+              if (table.isOpened()) {
+                openIdx = i;
+                break;
+              }
             }
           }
           for (int i = 0; i < size; ++i) {
@@ -292,7 +295,10 @@ int main(int argc, char const *argv[])
               if (not table.isPlayerFolded(i) and table.isPlayerComputer(i)) {
                 table.doComputerPlayerAction(i);
               }
-              if (table.isOpened()) {openIdx = i;}
+              if (table.isOpened()) {
+                openIdx = i;
+                break;
+              }
             }
           }
           std::vector<int> players = table.getPlayerOrder();
@@ -320,9 +326,11 @@ int main(int argc, char const *argv[])
             cout << "\nWinner! " << winner[0].printHand() << endl;
           }
           else {
-            cout << There was a tie! << endl;
+            cout << "There was a tie!" << endl;
             for (const Player & player : winner) {
-              cout << "\nWinner! " << winner[0].printHand() << endl;
+              if (player.isWinner()) {
+                cout << "\nWinner! " << player.printHand() << endl;
+              }
             }
           }
           cout << "All Hands this round: \n" << table.showPlayerHands();
